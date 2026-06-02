@@ -1,0 +1,164 @@
+/* ===========================================================
+   OVHcloud Brand Theme for Slidev
+   Built per the OVHcloud Brand Hub visual identity guidelines.
+   Primary: Masterbrand Blue. Secondary background: White.
+   Accents (sparing): Neon Blue, Neon Green, Neon Yellow.
+   =========================================================== */
+
+:root {
+  /* ----- Core brand colors ----- */
+  --ovh-masterbrand-blue: #000E9C;
+  --ovh-white: #FFFFFF;
+
+  /* ----- Secondary palette (use sparingly) ----- */
+  --ovh-neon-blue: #0050D7;
+  --ovh-neon-green: #00FF85;
+  --ovh-neon-yellow: #FFEC00;
+  --ovh-dark-blue: #001144;
+  --ovh-cobalt-blue: #1D3CE8;
+  --ovh-royal-blue: #3B4CCA;
+  --ovh-light-blue: #B6D2FF;
+  --ovh-sky-blue: #DCEAFD;
+
+  /* ----- Functional grays ----- */
+  --ovh-gray-900: #1A1A1A;
+  --ovh-gray-700: #4A4A4A;
+  --ovh-gray-500: #8A8A8A;
+  --ovh-gray-200: #E5E5E5;
+  --ovh-gray-100: #F5F5F5;
+
+  /* ----- Slidev semantic tokens ----- */
+  --slidev-theme-primary: var(--ovh-masterbrand-blue);
+  --slidev-theme-background: var(--ovh-white);
+  --slidev-theme-text: var(--ovh-gray-900);
+  --slidev-theme-accent: var(--ovh-neon-blue);
+
+  /* ----- Typography ----- */
+  --ovh-font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --ovh-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ===========================================================
+   Base
+   =========================================================== */
+
+.slidev-layout {
+  font-family: var(--ovh-font-sans);
+  color: var(--slidev-theme-text);
+  background-color: var(--slidev-theme-background);
+  padding: 3rem 4rem;
+}
+
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3,
+.slidev-layout h4 {
+  color: var(--ovh-masterbrand-blue);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.slidev-layout h1 {
+  font-size: 2.6rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 4px solid var(--ovh-masterbrand-blue);
+  padding-bottom: 0.4rem;
+}
+
+.slidev-layout h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.slidev-layout p,
+.slidev-layout li {
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.slidev-layout a {
+  color: var(--ovh-neon-blue);
+  text-decoration: underline;
+}
+
+.slidev-layout code {
+  font-family: var(--ovh-font-mono);
+  background-color: var(--ovh-gray-100);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.slidev-layout strong {
+  color: var(--ovh-masterbrand-blue);
+}
+
+/* ===========================================================
+   Footer (page number + module ID)
+   =========================================================== */
+
+.ovh-footer {
+  position: absolute;
+  bottom: 0.8rem;
+  left: 4rem;
+  right: 4rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--ovh-gray-500);
+  border-top: 1px solid var(--ovh-gray-200);
+  padding-top: 0.4rem;
+}
+
+.ovh-footer .ovh-brand {
+  color: var(--ovh-masterbrand-blue);
+  font-weight: 600;
+}
+
+/* ===========================================================
+   Utility blocks used inside slides
+   =========================================================== */
+
+.ovh-callout {
+  border-left: 4px solid var(--ovh-neon-blue);
+  background-color: var(--ovh-sky-blue);
+  padding: 0.8rem 1.2rem;
+  margin: 1rem 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.ovh-callout-warn {
+  border-left-color: var(--ovh-neon-yellow);
+  background-color: #FFFBE0;
+}
+
+.ovh-pill {
+  display: inline-block;
+  background-color: var(--ovh-masterbrand-blue);
+  color: var(--ovh-white);
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.ovh-pill-secondary {
+  background-color: var(--ovh-neon-blue);
+}
+
+.ovh-pill-warn {
+  background-color: var(--ovh-gray-900);
+  color: var(--ovh-neon-yellow);
+}
+
+/* ===========================================================
+   Workaround for Slidev bug #2519 (Goto component renders all
+   slides when input is empty and won't dismiss).
+   Ref: https://github.com/slidevjs/slidev/issues/2519
+   Remove this block once the upstream bug is fixed.
+   =========================================================== */
+
+#slidev-goto-dialog {
+  display: none !important;
+}

@@ -1,0 +1,14 @@
+{
+  "name": "slidev-theme-ovhcloud",
+  "version": "0.1.0",
+  "description": "OVHcloud brand theme for Slidev — Masterbrand Blue, white-first, neon accents",
+  "keywords": [
+    "slidev-theme",
+    "ovhcloud"
+  ],
+  "slidev": {
+    "colorSchema": "light",
+    "highlighter": "shiki"
+  },
+  "private": true
+}

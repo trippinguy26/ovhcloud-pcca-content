@@ -1,0 +1,24 @@
+{
+  "name": "ovhcloud-pcca-content",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OVHcloud — Public Cloud — Core Associate certification content (docs-as-code POC)",
+  "scripts": {
+    "dev": "slidev",
+    "build": "slidev build",
+    "export": "slidev export",
+    "export:pdf": "slidev export --format pdf --with-clicks",
+    "export:notes": "slidev export --format pdf --with-clicks --with-toc"
+  },
+  "dependencies": {
+    "@slidev/cli": "^0.49.0",
+    "@slidev/theme-default": "^0.25.0",
+    "playwright-chromium": "^1.40.0"
+  },
+  "devDependencies": {
+    "vue": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=20.12.0"
+  }
+}
