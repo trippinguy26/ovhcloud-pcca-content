@@ -270,7 +270,7 @@ slideId: "S02 — Cloud properly defined"
 </div>
 
 <div class="ovh-callout mt-10">
-  <strong>Reality filter:</strong> if any one of these five is missing, it's not cloud — it's hosting.
+  <strong>Reality filter:</strong> if any one of these five is missing, it's not cloud — it's hostng.
 </div>
 
 <div class="absolute bottom-12 right-12 text-xs" style="color: var(--ovh-gray-500);">
