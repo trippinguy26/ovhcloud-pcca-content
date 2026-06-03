@@ -36,7 +36,38 @@ jobs:
         run: npx playwright install chromium
 
       - name: Build HTML site (Module 1.1)
-        run: npx slidev build modules/module-1-1-cloud-foundations/slides.md --base /ovhcloud-pcca-content/ --out dist/module-1-1
+        run: npx slidev build modules/module-1-1-cloud-foundations/slides.md --base /ovhcloud-pcca-content/module-1-1/ --out dist/module-1-1
+
+      - name: Create root index with module list
+        run: |
+          cat > dist/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <title>OVHcloud — Public Cloud — Core Associate</title>
+            <style>
+              body { font-family: 'Inter', sans-serif; max-width: 720px; margin: 4rem auto; padding: 0 2rem; color: #1A1A1A; }
+              h1 { color: #000E9C; border-bottom: 4px solid #000E9C; padding-bottom: 0.4rem; }
+              a { color: #0050D7; text-decoration: none; font-weight: 600; }
+              a:hover { text-decoration: underline; }
+              ul { list-style: none; padding: 0; }
+              li { padding: 0.8rem 0; border-bottom: 1px solid #E5E5E5; }
+              .badge { background: #000E9C; color: white; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.75rem; margin-right: 0.5rem; }
+            </style>
+          </head>
+          <body>
+            <h1>OVHcloud — Public Cloud — Core Associate</h1>
+            <p>Modules available in this build:</p>
+            <ul>
+              <li><span class="badge">1.1</span><a href="module-1-1/">Cloud Foundations &amp; OVHcloud Positioning</a></li>
+            </ul>
+            <p style="margin-top: 3rem; font-size: 0.85rem; color: #8A8A8A;">
+              Internal training content — OVHcloud Product Enablement.
+            </p>
+          </body>
+          </html>
+          EOF
 
       - name: Export PDF (Module 1.1)
         run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --output dist/module-1-1/module-1-1-cloud-foundations.pdf
