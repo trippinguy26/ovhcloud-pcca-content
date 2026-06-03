@@ -16,16 +16,21 @@ defineProps<{
 
 <style scoped>
 .ovh-section {
-  background-color: var(--ovh-sky-blue);
+  background-color: #E8F4FF;
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
 
 .ovh-section :deep(h1) {
-  font-size: 2.8rem;
+  font-size: 2.6rem;
   border-bottom: none;
   margin-top: 1rem;
+}
+
+.ovh-section :deep(h3) {
+  color: var(--ovh-gray-700);
+  font-weight: 400;
 }
 
 .ovh-section-content {
