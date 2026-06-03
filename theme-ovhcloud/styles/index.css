@@ -122,9 +122,11 @@
 .ovh-callout {
   border-left: 4px solid var(--ovh-neon-blue);
   background-color: var(--ovh-sky-blue);
-  padding: 0.8rem 1.2rem;
-  margin: 1rem 0;
+  padding: 0.4rem 0.8rem;
+  margin: 0.4rem 0;
   border-radius: 0 4px 4px 0;
+  font-size: 0.75rem;
+  line-height: 1.3;
 }
 
 .ovh-callout-warn {
@@ -150,6 +152,71 @@
 .ovh-pill-warn {
   background-color: var(--ovh-gray-900);
   color: var(--ovh-neon-yellow);
+}
+
+/* ===========================================================
+   Cross-reference table (S23 pattern — used in every module
+   when introducing a service with hyperscaler equivalents)
+   =========================================================== */
+
+.ovh-xref-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  margin: 0;
+}
+
+.ovh-xref-table thead th {
+  background-color: var(--ovh-masterbrand-blue);
+  color: var(--ovh-white);
+  padding: 0.4rem 0.7rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+
+.ovh-xref-table thead th:first-child {
+  border-top-left-radius: 6px;
+}
+
+.ovh-xref-table thead th:last-child {
+  border-top-right-radius: 6px;
+}
+
+.ovh-xref-table tbody td {
+  padding: 0.3rem 0.7rem;
+  border-bottom: 1px solid var(--ovh-gray-200);
+  vertical-align: middle;
+  line-height: 1.3;
+}
+
+.ovh-xref-table tbody tr:nth-child(even) td {
+  background-color: var(--ovh-gray-100);
+}
+
+.ovh-xref-table tbody td:first-child {
+  font-weight: 600;
+  color: var(--ovh-masterbrand-blue);
+  width: 22%;
+}
+
+.ovh-xref-table tbody td:not(:first-child) {
+  font-family: var(--ovh-font-mono);
+  font-size: 0.68rem;
+  color: var(--ovh-gray-900);
+}
+
+.ovh-xref-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ovh-xref-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 6px;
+}
+
+.ovh-xref-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 6px;
 }
 
 /* ===========================================================
