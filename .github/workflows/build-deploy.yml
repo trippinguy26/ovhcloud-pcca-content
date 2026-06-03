@@ -36,7 +36,7 @@ jobs:
         run: npx playwright install chromium
 
       - name: Build HTML site (Module 1.1)
-        run: npx slidev build modules/module-1-1-cloud-foundations/slides.md --base /ovhcloud-pcca-content/module-1-1/ --out dist/module-1-1
+        run: npx slidev build modules/module-1-1-cloud-foundations/slides.md --base /ovhcloud-pcca-content/module-1-1/ --out $GITHUB_WORKSPACE/dist/module-1-1
 
       - name: DEBUG — contents of dist after HTML build
         run: |
@@ -78,7 +78,7 @@ jobs:
           EOF
 
       - name: Export PDF (Module 1.1)
-        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --output dist/module-1-1/downloads/module-1-1-cloud-foundations.pdf
+        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --output $GITHUB_WORKSPACE/dist/module-1-1/downloads/module-1-1-cloud-foundations.pdf
 
       - name: DEBUG — contents of dist after first PDF export
         run: |
@@ -86,7 +86,7 @@ jobs:
           ls -la dist/module-1-1/ | head -20
 
       - name: Export PDF with trainer notes (Module 1.1)
-        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --with-clicks --with-toc --output dist/module-1-1/downloads/module-1-1-trainer-notes.pdf
+        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --with-clicks --with-toc --output $GITHUB_WORKSPACE/dist/module-1-1/downloads/module-1-1-trainer-notes.pdf
 
       - name: DEBUG — contents of dist before Pages upload
         run: |
