@@ -270,7 +270,7 @@ slideId: "S02 — Cloud properly defined"
 </div>
 
 <div class="ovh-callout mt-10">
-  <strong>Reality filter:</strong> if any one of these five is missing, it's not cloud — it's hosting.
+  <strong>Reality filter:</strong> if any one of these five is missing, it's not cloud — it's hostng.
 </div>
 
 <div class="absolute bottom-12 right-12 text-xs" style="color: var(--ovh-gray-500);">
@@ -294,7 +294,10 @@ slideId: "S03 — IaaS / PaaS / SaaS"
 
 # IaaS / PaaS / SaaS — who owns what
 
-```mermaid {scale: 0.65}
+<div class="flex justify-center">
+
+```mermaid {scale: 0.55}
+%%{init: {'flowchart': {'nodeSpacing': 12, 'rankSpacing': 15, 'subGraphTitleMargin': {'top': 10, 'bottom': 15}}}}%%
 flowchart TB
     subgraph On_Prem["On-premise"]
       OP1[Application]:::cust
@@ -335,7 +338,13 @@ flowchart TB
 
     classDef cust fill:#DCEAFD,stroke:#000E9C,color:#000E9C
     classDef prov fill:#000E9C,stroke:#000E9C,color:#FFFFFF
+    style On_Prem fill:#FFFFFF,stroke:#000E9C,stroke-width:1px,color:#000E9C
+    style IaaS fill:#FFFFFF,stroke:#000E9C,stroke-width:1px,color:#000E9C
+    style PaaS fill:#FFFFFF,stroke:#000E9C,stroke-width:1px,color:#000E9C
+    style SaaS fill:#FFFFFF,stroke:#000E9C,stroke-width:1px,color:#000E9C
 ```
+
+</div>
 
 <div class="ovh-callout mt-4">
   <strong>OVHcloud Public Cloud Core = IaaS.</strong> Adjacent managed services (MKS, DBaaS) sit higher in the stack and are out of scope for this certification.
@@ -358,7 +367,7 @@ slideId: "S04 — Shared responsibility"
 
 # Shared responsibility, applied to IaaS
 
-<div class="grid grid-cols-2 gap-8 mt-6">
+<div class="grid grid-cols-2 gap-6 mt-4">
 
 <div>
 
@@ -390,8 +399,8 @@ slideId: "S04 — Shared responsibility"
 
 </div>
 
-<div class="ovh-callout mt-8">
-  <strong>"Shared" does not mean "split 50/50".</strong> It means clearly delineated. The line sits between the hypervisor and the guest OS.
+<div class="ovh-callout mt-4">
+  <strong>"Shared" ≠ "split 50/50".</strong> The line sits between the hypervisor and the guest OS.
 </div>
 
 <!--
@@ -406,8 +415,44 @@ Trainer notes — S04 Shared responsibility:
 ---
 layout: default
 moduleId: "1.1"
-slideId: "POC marker"
+slideId: "S23 — Hyperscaler cross-reference"
 ---
+
+# OVHcloud ↔ AWS ↔ Azure — Core scope
+
+<div class="ovh-xref-table mt-4">
+
+| Category | OVHcloud | AWS | Azure |
+|---|---|---|---|
+| **Compute (VM)** | Public Cloud Instance | EC2 | Virtual Machine |
+| **Block storage** | Block Storage (Cinder) | EBS | Managed Disk |
+| **Object storage** | Object Storage (S3-compatible) | S3 | Blob Storage |
+| **Cold storage** | Cold Archive | S3 Glacier | Archive Storage |
+| **Private network** | vRack + Private Network | VPC | VNet |
+| **Load balancer** | Load Balancer (Octavia) | ELB / ALB / NLB | Load Balancer |
+| **Public IP** | Floating IP / Failover IP | Elastic IP | Public IP |
+| **DNS** | DNS Zone | Route 53 | Azure DNS |
+| **Identity / RBAC** | IAM (Policy + Role) | IAM | Entra ID + RBAC |
+| **Infra as Code** | Terraform / OpenStack CLI | CloudFormation / Terraform | ARM / Bicep / Terraform |
+| **Object lifecycle** | S3 Lifecycle Rules | S3 Lifecycle | Blob Lifecycle Mgmt |
+
+</div>
+
+<div class="ovh-callout mt-4">
+  <strong>Reading guide:</strong> rows are <em>functionally equivalent</em>, not feature-identical. Use this table to bridge mental models, not to compare SLAs or feature parity.
+</div>
+
+<!--
+Trainer notes — S23 Hyperscaler cross-reference:
+- Souligner que la table couvre uniquement le scope Core Associate — les services managés (MKS, DBaaS, AI) sont hors-périmètre et apparaîtront dans les certifs sœurs.
+- Anticiper "et le serverless ?" → pas de Lambda équivalent natif dans le Core OVHcloud, c'est une différence structurelle assumée (voir Q1 du FAQ trainer).
+- Anticiper "vRack et VPC c'est pareil ?" → non, modèles différents (L2 chez OVHcloud, L3 chez AWS), à clarifier en Module 2.4 Network.
+- Cette table est le "north star" cross-référence du programme — chaque module qui introduit un nouveau service vient compléter une ligne ici.
+- Distribuer en handout à la fin du module — les apprenants ex-AWS y reviennent constamment.
+-->
+
+---
+layout: default
 
 # POC stops here
 
