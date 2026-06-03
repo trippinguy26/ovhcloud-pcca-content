@@ -38,6 +38,13 @@ jobs:
       - name: Build HTML site (Module 1.1)
         run: npx slidev build modules/module-1-1-cloud-foundations/slides.md --base /ovhcloud-pcca-content/module-1-1/ --out dist/module-1-1
 
+      - name: DEBUG — contents of dist after HTML build
+        run: |
+          echo "=== dist/ ==="
+          ls -la dist/
+          echo "=== dist/module-1-1/ ==="
+          ls -la dist/module-1-1/ | head -20
+
       - name: Create root index with module list
         run: |
           mkdir -p dist
@@ -71,10 +78,20 @@ jobs:
           EOF
 
       - name: Export PDF (Module 1.1)
-        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --output dist/module-1-1/module-1-1-cloud-foundations.pdf
+        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --output dist/module-1-1/downloads/module-1-1-cloud-foundations.pdf
+
+      - name: DEBUG — contents of dist after first PDF export
+        run: |
+          echo "=== dist/module-1-1/ after PDF 1 ==="
+          ls -la dist/module-1-1/ | head -20
 
       - name: Export PDF with trainer notes (Module 1.1)
-        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --with-clicks --with-toc --output dist/module-1-1/module-1-1-trainer-notes.pdf
+        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --with-clicks --with-toc --output dist/module-1-1/downloads/module-1-1-trainer-notes.pdf
+
+      - name: DEBUG — contents of dist before Pages upload
+        run: |
+          echo "=== dist/ final ==="
+          find dist -maxdepth 3 -type f | head -30
 
       - name: Upload build artefacts
         uses: actions/upload-artifact@v4
