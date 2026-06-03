@@ -25,7 +25,7 @@ defineProps<{
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 4rem 5rem;
+  padding: 7rem 5rem 4rem 5rem;
   position: relative;
 }
 
