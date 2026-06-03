@@ -40,6 +40,7 @@ jobs:
 
       - name: Create root index with module list
         run: |
+          mkdir -p dist
           cat > dist/index.html << 'EOF'
           <!DOCTYPE html>
           <html lang="en">
