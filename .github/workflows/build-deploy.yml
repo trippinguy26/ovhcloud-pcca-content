@@ -17,8 +17,37 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  # ---------------------------------------------------------------------------
+  # Discover modules to build from modules.json (published only)
+  # ---------------------------------------------------------------------------
+  discover:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      count: ${{ steps.set-matrix.outputs.count }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build matrix from modules.json
+        id: set-matrix
+        run: |
+          matrix=$(jq -c '{include: [.modules[] | select(.status == "published") | {id, slug, title}]}' modules.json)
+          count=$(jq '[.modules[] | select(.status == "published")] | length' modules.json)
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Discovered $count published module(s):"
+          jq -r '.modules[] | select(.status == "published") | "  - \(.id) \(.slug)"' modules.json
+
+  # ---------------------------------------------------------------------------
+  # Build each published module in parallel (HTML site + PDFs)
+  # ---------------------------------------------------------------------------
+  build-module:
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,80 +64,86 @@ jobs:
       - name: Install Playwright Chromium (for PDF export)
         run: npx playwright install chromium
 
-      - name: Build HTML site (Module 1.1)
-        run: npx slidev build modules/module-1-1-cloud-foundations/slides.md --base /ovhcloud-pcca-content/module-1-1/ --out $GITHUB_WORKSPACE/dist/module-1-1
-
-      - name: DEBUG — contents of dist after HTML build
+      - name: Compute module path & URL base
+        id: paths
         run: |
-          echo "=== dist/ ==="
-          ls -la dist/
-          echo "=== dist/module-1-1/ ==="
-          ls -la dist/module-1-1/ | head -20
+          module_id_url="$(echo '${{ matrix.id }}' | tr '.' '-')"
+          echo "module_id_url=$module_id_url" >> "$GITHUB_OUTPUT"
+          echo "slides_path=modules/${{ matrix.slug }}/slides.md" >> "$GITHUB_OUTPUT"
+          echo "out_dir=$GITHUB_WORKSPACE/dist/module-$module_id_url" >> "$GITHUB_OUTPUT"
 
-      - name: Create root index with module list
+      - name: Build HTML site
         run: |
-          mkdir -p dist
-          cat > dist/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <title>OVHcloud — Public Cloud — Core Associate</title>
-            <style>
-              body { font-family: 'Inter', sans-serif; max-width: 720px; margin: 4rem auto; padding: 0 2rem; color: #1A1A1A; }
-              h1 { color: #000E9C; border-bottom: 4px solid #000E9C; padding-bottom: 0.4rem; }
-              a { color: #0050D7; text-decoration: none; font-weight: 600; }
-              a:hover { text-decoration: underline; }
-              ul { list-style: none; padding: 0; }
-              li { padding: 0.8rem 0; border-bottom: 1px solid #E5E5E5; }
-              .badge { background: #000E9C; color: white; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.75rem; margin-right: 0.5rem; }
-            </style>
-          </head>
-          <body>
-            <h1>OVHcloud — Public Cloud — Core Associate</h1>
-            <p>Modules available in this build:</p>
-            <ul>
-              <li><span class="badge">1.1</span><a href="module-1-1/">Cloud Foundations &amp; OVHcloud Positioning</a></li>
-            </ul>
-            <p style="margin-top: 3rem; font-size: 0.85rem; color: #8A8A8A;">
-              Internal training content — OVHcloud Product Enablement.
-            </p>
-          </body>
-          </html>
-          EOF
+          npx slidev build "${{ steps.paths.outputs.slides_path }}" \
+            --base "/${{ github.event.repository.name }}/module-${{ steps.paths.outputs.module_id_url }}/" \
+            --out "${{ steps.paths.outputs.out_dir }}"
 
-      - name: Export PDF (Module 1.1)
-        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --output $GITHUB_WORKSPACE/dist/module-1-1/downloads/module-1-1-cloud-foundations.pdf
-
-      - name: DEBUG — contents of dist after first PDF export
+      - name: Export PDF (learner version)
         run: |
-          echo "=== dist/module-1-1/ after PDF 1 ==="
-          ls -la dist/module-1-1/ | head -20
+          npx slidev export "${{ steps.paths.outputs.slides_path }}" \
+            --output "${{ steps.paths.outputs.out_dir }}/downloads/module-${{ steps.paths.outputs.module_id_url }}.pdf"
 
-      - name: Export PDF with trainer notes (Module 1.1)
-        run: npx slidev export modules/module-1-1-cloud-foundations/slides.md --with-clicks --with-toc --output $GITHUB_WORKSPACE/dist/module-1-1/downloads/module-1-1-trainer-notes.pdf
-
-      - name: DEBUG — contents of dist before Pages upload
+      - name: Export PDF (with trainer notes)
         run: |
-          echo "=== dist/ final ==="
-          find dist -maxdepth 3 -type f | head -30
+          npx slidev export "${{ steps.paths.outputs.slides_path }}" \
+            --with-clicks --with-toc \
+            --output "${{ steps.paths.outputs.out_dir }}/downloads/module-${{ steps.paths.outputs.module_id_url }}-trainer-notes.pdf"
 
-      - name: Upload build artefacts
+      - name: Upload module artifact (for PR preview & deploy job)
         uses: actions/upload-artifact@v4
         with:
-          name: module-1-1-build
-          path: dist/module-1-1/
+          name: module-${{ steps.paths.outputs.module_id_url }}
+          path: ${{ steps.paths.outputs.out_dir }}
           retention-days: 30
 
+  # ---------------------------------------------------------------------------
+  # Assemble the full dist/ on main: download each module artifact, generate
+  # the root index.html from modules.json, then upload as Pages artifact.
+  # ---------------------------------------------------------------------------
+  assemble:
+    if: github.ref == 'refs/heads/main'
+    needs: [discover, build-module]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download all module artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+          pattern: module-*
+          merge-multiple: false
+
+      - name: Inspect downloaded layout
+        run: |
+          echo "=== dist/ layout ==="
+          find dist -maxdepth 2 -mindepth 1 -type d | sort
+
+      - name: Generate root index.html from modules.json
+        run: node scripts/build-index.mjs --out dist
+
+      - name: Verify final dist/
+        run: |
+          echo "=== dist/ final ==="
+          find dist -maxdepth 3 -type f | sort | head -50
+
       - name: Upload Pages artifact
-        if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist/
 
+  # ---------------------------------------------------------------------------
+  # Deploy to GitHub Pages (main only)
+  # ---------------------------------------------------------------------------
   deploy:
     if: github.ref == 'refs/heads/main'
-    needs: build
+    needs: assemble
     runs-on: ubuntu-latest
     environment:
       name: github-pages
