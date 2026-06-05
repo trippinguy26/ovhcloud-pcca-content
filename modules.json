@@ -1,0 +1,28 @@
+{
+  "$schema": "./scripts/modules.schema.json",
+  "program": {
+    "name": "OVHcloud — Public Cloud — Core Associate",
+    "shortName": "Public Cloud — Core Associate",
+    "tagline": "Internal training content — OVHcloud Product Enablement"
+  },
+  "modules": [
+    {
+      "id": "1.1",
+      "slug": "module-1-1-cloud-foundations",
+      "title": "Cloud Foundations & OVHcloud Positioning",
+      "day": 1,
+      "order": 1,
+      "duration": "1h30",
+      "status": "published"
+    },
+    {
+      "id": "1.2",
+      "slug": "module-1-2-pci-foundation-iam",
+      "title": "Public Cloud Project, Regions & Basic IAM",
+      "day": 1,
+      "order": 2,
+      "duration": "1h30",
+      "status": "published"
+    }
+  ]
+}
