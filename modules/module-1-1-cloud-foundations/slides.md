@@ -721,7 +721,7 @@ slideId: "S23 — Hyperscaler cross-reference"
 
 # OVHcloud ↔ AWS ↔ Azure — Core scope
 
-<div class="ovh-xref-table mt-4">
+<div class="ovh-xref-table mt-0">
 
 | Category | OVHcloud | AWS | Azure |
 |---|---|---|---|
@@ -731,15 +731,14 @@ slideId: "S23 — Hyperscaler cross-reference"
 | **Cold storage** | Cold Archive | S3 Glacier | Archive Storage |
 | **Private network** | vRack + Private Network | VPC | VNet |
 | **Load balancer** | Load Balancer (Octavia) | ELB / ALB / NLB | Load Balancer |
-| **Public IP** | Floating IP / Failover IP | Elastic IP | Public IP |
+| **Public IP** | Floating IP | Elastic IP | Public IP |
 | **DNS** | DNS Zone | Route 53 | Azure DNS |
 | **Identity / RBAC** | IAM (Policy + Role) | IAM | Entra ID + RBAC |
 | **Infra as Code** | Terraform / OpenStack CLI | CloudFormation / Terraform | ARM / Bicep / Terraform |
-| **Object lifecycle** | S3 Lifecycle Rules | S3 Lifecycle | Blob Lifecycle Mgmt |
 
 </div>
 
-<div class="ovh-callout mt-4">
+<div class="ovh-callout mt-3">
   <strong>Reading guide:</strong> rows are <em>functionally equivalent</em>, not feature-identical. Use this table to bridge mental models, not to compare SLAs or feature parity.
 </div>
 
