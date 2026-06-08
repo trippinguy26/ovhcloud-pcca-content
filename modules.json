@@ -1,5 +1,4 @@
 {
-  "$schema": "./scripts/modules.schema.json",
   "program": {
     "name": "OVHcloud — Public Cloud — Core Associate",
     "shortName": "Public Cloud — Core Associate",
@@ -30,6 +29,15 @@
       "title": "Compute Instances, Flavors & Deployment",
       "day": 1,
       "order": 3,
+      "duration": "1h30",
+      "status": "published"
+    },
+    {
+      "id": "1.4",
+      "slug": "module-1-4-compute-lifecycle-security-diagnostics",
+      "title": "Compute Lifecycle, Security & Diagnostics",
+      "day": 1,
+      "order": 4,
       "duration": "1h30",
       "status": "published"
     }
