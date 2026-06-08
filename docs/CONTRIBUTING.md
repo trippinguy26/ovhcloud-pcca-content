@@ -5,26 +5,52 @@
 1. **Open an issue** describing the change (typo, content update, new module, etc.).
 2. **Create a branch** from `main`: `git checkout -b <type>/<module>-<short-description>`
    - Types: `fix/` (typo, factual error), `update/` (content refresh), `feat/` (new slide, new lab), `chore/` (theme, tooling).
-   - Example: `fix/module-1-1-typo-s02`, `update/module-1-1-pricing-2026Q4`.
-3. **Edit locally** with `npm run dev -- modules/<module>/slides.md` to see the live result.
-4. **Commit** with a clear message: `fix(module-1-1): correct NIST publication year on S02`.
-5. **Push** and open a Pull Request targeting `main`.
-6. **Request review** from the module owner.
-7. Once approved and CI green → merge. The pipeline rebuilds and redeploys automatically.
+   - Example: `fix/module-1-1-typo-s02`, `update/module-1-1-pricing-2026Q4`, `feat/creation-module-1-3-compute`.
+3. **For a new module**: also register it in `modules.json` at the repo root with `"status": "draft"`. Flip to `"published"` only when the module is ready to ship to the landing page. See *Adding a new module* below.
+4. **Edit locally** with `npm run dev -- modules/<module>/slides.md` to see the live result.
+5. **Commit** with a clear message: `fix(module-1-1): correct NIST publication year on S02`.
+6. **Push** and open a Pull Request targeting `main`. The CI will build every `published` module in parallel and attach the HTML site + PDFs as downloadable artifacts on the PR.
+7. **Request review** from the module owner.
+8. Once approved and CI green → merge. The pipeline rebuilds and redeploys automatically.
+
+## Adding a new module
+
+A module is built and published only if it has an entry with `"status": "published"` in `modules.json`. To add one:
+
+1. Create the folder under `modules/`, e.g. `modules/module-1-3-compute-instances/` with a `slides.md` inside.
+2. Add an entry to `modules.json` with `"status": "draft"` while authoring — the CI will not attempt to build it.
+3. When the module is reviewed and ready, switch `"status"` to `"published"`. The next merge to `main` builds it and lists it on the landing page.
+
+```json
+{
+  "id": "1.3",
+  "slug": "module-1-3-compute-instances",
+  "title": "Compute (Part 1) — Instances, Flavors & Deployment",
+  "day": 1,
+  "order": 3,
+  "duration": "1h30",
+  "status": "draft"
+}
+```
+
+The `slug` must match the folder name exactly. The `id` follows the `<day>.<index>` convention. The `order` field controls the listing order within a day on the landing page.
 
 ## Authoring conventions
 
 ### Slide structure
 
-Each slide in `slides.md` is separated by `---` and starts with a YAML frontmatter block:
+Each slide in `slides.md` is separated by `---` and starts with a YAML frontmatter block. Content slides must reference their LOs:
 
 ```yaml
 ---
 layout: default          # or: cover, two-cols, section
 moduleId: "1.1"
 slideId: "S02 — NIST"
+los: ["LO-FND-K01", "LO-FND-K02"]
 ---
 ```
+
+`cover` and `section` layouts are visual transitions and do not require `los`. Every other content slide must reference at least one LO from the program's skills matrix.
 
 ### Trainer notes
 
@@ -32,7 +58,7 @@ Trainer notes live in HTML comments **directly after** the slide content:
 
 ```markdown
 <!--
-Trainer notes — S02 NIST:
+Trainer notes S02 NIST:
 - Talking point 1
 - Anticipated question: ...
 -->
@@ -40,13 +66,7 @@ Trainer notes — S02 NIST:
 
 The export pipeline harvests these comments into the trainer PDF.
 
-### LO traceability
-
-Each content slide must reference at least one LO from the program's skills matrix. Add it in the frontmatter:
-
-```yaml
-los: ["LO-FND-K01", "LO-FND-K02"]
-```
+> **ASCII-only inside HTML comments.** Some Vue/Vite versions fail to parse HTML comments (`<!-- ... -->`) containing double em-dash (`—`) sequences and raise "Unexpected EOF in comment" errors. Inside trainer notes, prefer plain ASCII punctuation (`:`, `,`, single hyphen `-`). Reserve em-dash for slide-visible content only.
 
 ### Mermaid diagrams
 
@@ -58,6 +78,8 @@ flowchart LR
   A --> B
 ```
 ````
+
+For decision grids and trees with 4+ nodes, prefer `flowchart LR` over `flowchart TB` to avoid vertical overflow on 16:9 slides. Reserve `TB` for short flows (≤3 nodes).
 
 For free-form schematics, use Excalidraw and commit the `.excalidraw` file alongside the slide.
 
@@ -137,7 +159,7 @@ grep -rh "^\s*--ods-" node_modules/@ovhcloud/ods-themes/dist/ | sort -u
 
 ### Using OVHcloud components in slides
 
-Four Vue components are available globally in every `slides.md`:
+Four Vue components are available globally in every `slides.md`. **These are the supported callout patterns** — use them in all new content:
 
 ```markdown
 <OvhNotice title="Pro tip">
@@ -157,11 +179,14 @@ Open the OVHcloud Manager and navigate to the Public Cloud universe.
 </OvhStep>
 ```
 
+> **Legacy pattern — do not reproduce.** Modules 1.1 and 1.2 use raw `<div class="ovh-callout">` and `<div class="ovh-callout ovh-callout-warn">` elements instead of the Vue components above. This is an early-iteration carry-over kept for backward compatibility. New modules and any new slides in existing modules **must** use the Vue components.
+
 ### Brand assets
 
 - **Logos**: `theme-ovhcloud/assets/ovhcloud-logo-color.png` and `ovhcloud-logo-white.png`. Master logo, fullcolor on white backgrounds, white on blue backgrounds.
 - **Fonts**: Source Sans Pro `.otf` files under `theme-ovhcloud/fonts/`, embedded locally for offline-deterministic builds.
 - **Icons**: Selection from the OVHcloud iconography (Solid_Icons_Blue, Outlined, Layered) is to be added to `theme-ovhcloud/icons/` on a per-need basis. Do not embed the entire 909-file iconography set.
+- **No third-party logos**: avoid embedding competitor or partner logos (AWS, Azure, OpenStack, etc.) as image assets. Use text names instead. Reasons: copyright exposure, logos change over time, and a logo grid implicitly suggests a ranking.
 
 ### Brand & ODS layering
 
@@ -173,9 +198,13 @@ When choosing where a styling rule belongs:
 
 ## Review checklist (for PR reviewers)
 
-- [ ] LO traceability present
-- [ ] Trainer notes present and useful (not just a copy of talking points)
+- [ ] If a new module: entry present in `modules.json` with correct `id`, `slug`, `day`, `order`
+- [ ] `slides.md` frontmatter complete (module-level + per-slide `moduleId`, `slideId`, `los`)
+- [ ] LO traceability present on every content slide
+- [ ] Trainer notes present and useful (not just a copy of talking points), ASCII-only inside HTML comments
+- [ ] OVHcloud Vue components used for callouts (`OvhNotice`, `OvhWarning`, `OvhCard`, `OvhStep`) — no new `<div class="ovh-callout">` patterns
 - [ ] ODS tokens used wherever possible (no hardcoded hex unless justified)
 - [ ] AWS/Azure cross-reference present if the slide introduces a service
 - [ ] Legacy analogy present before any cloud-native concept
-- [ ] Builds without warning locally (`npm run build`)
+- [ ] No third-party logos embedded as image assets
+- [ ] CI green on the PR (HTML site + PDFs build successfully for every published module)
