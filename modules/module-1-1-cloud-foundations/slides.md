@@ -9,7 +9,7 @@ info: |
   ## OVHcloud — Public Cloud — Core Associate
   Module 1.1 — Cloud Foundations & OVHcloud Positioning.
   Duration: 1h30.
-class: text-center
+class: text-left
 highlighter: shiki
 lineNumbers: false
 drawings:
@@ -40,11 +40,8 @@ los:
   - LO-FND-A02
 ---
 
-<!-- ====================================================== -->
-<!-- COVER SLIDE                                            -->
-<!-- ====================================================== -->
-
 ---
+# COVER SLIDE
 layout: cover
 moduleId: "1.1"
 duration: "1h30"
@@ -106,11 +103,8 @@ Trainer notes — Agenda:
 - Set expectations on timing — strict 90 min, including transitions.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 1 — SENTIER BATTU                                -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 1 — SENTIER BATTU
 layout: section
 block: "Block 1"
 duration: "5 min"
@@ -162,11 +156,8 @@ Trainer notes — S00 Before we start:
 - Remind: this *sentier battu* applies to all 3 days, not just this module.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 2 — THEORY & CONCEPTS                            -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 2 — THEORY & CONCEPTS
 layout: section
 block: "Block 2"
 duration: "30 min"
@@ -711,8 +702,6 @@ Trainer notes S10 Qualification grid:
 - Demander avant de basculer en demo : "un workload de votre boite qui passerait cette grille ?" : capter 1-2 exemples concrets pour le Positioning Drill.
 -->
 
-
-
 ---
 layout: default
 moduleId: "1.1"
@@ -751,11 +740,8 @@ Trainer notes — S23 Hyperscaler cross-reference:
 - Distribuer en handout à la fin du module — les apprenants ex-AWS y reviennent constamment.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 3 — TRAINER DEMONSTRATION                        -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 3 — TRAINER DEMONSTRATION 
 layout: section
 block: "Block 3"
 duration: "15 min"
@@ -833,11 +819,8 @@ FAILURE MODES:
 Q&A (5 min) : park technical questions on instances/IAM/regions for the relevant later modules, do not answer here.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 4 — LEARNER LAB                                  -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 4 — LEARNER LAB 
 layout: section
 block: "Block 4"
 duration: "30 min"
@@ -977,11 +960,8 @@ Trainer notes — Objection cards:
 - Si moins de 8 pairs : retirer en priorite les cartes #2, #5, #8 (les plus proches d'autres cartes). Si plus de 8 pairs : doublons autorises, restitution croisee force des angles differents.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 5 — MICRO-CHECK QCM                              -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 5 — MICRO-CHECK QCM
 layout: section
 block: "Block 5"
 duration: "5 min"
@@ -1169,11 +1149,8 @@ Trainer notes — Q6:
 - C'est la question Apply du QCM : trace directement au lab Positioning Drill, carte #7.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 6 — WRAP-UP & TRANSITION                         -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 6 — WRAP-UP & TRANSITION 
 layout: section
 block: "Block 6"
 duration: "5 min"

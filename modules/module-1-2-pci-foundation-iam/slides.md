@@ -9,7 +9,7 @@ info: |
   ## OVHcloud — Public Cloud — Core Associate
   Module 1.2 — Public Cloud Project, Regions & Basic IAM.
   Duration: 1h30.
-class: text-center
+class: text-left
 highlighter: shiki
 lineNumbers: false
 drawings:
@@ -44,11 +44,8 @@ los:
   - LO-PCI-A02
 ---
 
-<!-- ====================================================== -->
-<!-- COVER SLIDE                                            -->
-<!-- ====================================================== -->
-
 ---
+# COVER SLIDE
 layout: cover
 moduleId: "1.2"
 duration: "1h30"
@@ -110,11 +107,8 @@ Trainer notes Agenda:
 - Strict timing 90 min, pause prevue apres ce module.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 1 — SENTIER BATTU                                -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 1 — SENTIER BATTU
 layout: section
 block: "Block 1"
 duration: "5 min"
@@ -169,11 +163,8 @@ Trainer notes S00 Before we start:
 - Rappeler : ce sentier battu s'applique a tous les modules suivants, le CLI est une constante.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 2 — THEORY & CONCEPTS                            -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 2 — THEORY & CONCEPTS
 layout: section
 block: "Block 2"
 duration: "30 min"
@@ -770,11 +761,8 @@ Trainer notes S10 403 Keystone error:
 - Verifier en posant : "tu recois un 403, premier reflexe ?" reponse attendue : openstack role assignment list.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 3 — TRAINER DEMONSTRATION                        -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 3 — TRAINER DEMONSTRATION 
 layout: section
 block: "Block 3"
 duration: "15 min"
@@ -858,11 +846,8 @@ FAILURE MODES:
 Q&A (3 min) : focus on identity model and bootstrap flow. Park IaC questions for Module 3.1.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 4 — LEARNER LAB                                  -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 4 — LEARNER LAB
 layout: section
 block: "Block 4"
 duration: "30 min"
@@ -993,11 +978,8 @@ SUPPORT FAQ (anticipated learner questions):
 - "Je peux nommer mon projet differemment ?" : garder le suffixe '-northwind-staging', le prefixe peut varier.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 5 — MICRO-CHECK QCM                              -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 5 — MICRO-CHECK QCM  
 layout: section
 block: "Block 5"
 duration: "5 min"
@@ -1211,11 +1193,8 @@ Trainer notes Q7:
 - Insister sur le 401/403 split a chaque fois que la question est traitee.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 6 — WRAP-UP & TRANSITION                         -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 6 — WRAP-UP & TRANSITION 
 layout: section
 block: "Block 6"
 duration: "5 min"

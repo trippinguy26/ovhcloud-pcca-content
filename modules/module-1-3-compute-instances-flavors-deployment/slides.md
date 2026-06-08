@@ -9,7 +9,7 @@ info: |
   ## OVHcloud — Public Cloud — Core Associate
   Module 1.3 — Compute (Part 1) — Instances, Flavors & Deployment.
   Duration: 1h30.
-class: text-center
+class: text-left
 highlighter: shiki
 lineNumbers: false
 drawings:
@@ -41,11 +41,8 @@ los:
   - LO-CMP-S04
 ---
 
-<!-- ====================================================== -->
-<!-- COVER SLIDE                                            -->
-<!-- ====================================================== -->
-
 ---
+# COVER SLIDE
 layout: cover
 moduleId: "1.3"
 duration: "1h30"
@@ -108,11 +105,8 @@ Trainer notes Agenda:
 - Strict timing 90 min, pause prevue apres ce module.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 1 — SENTIER BATTU                                -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 1 — SENTIER BATTU
 layout: section
 block: "Block 1"
 duration: "5 min"
@@ -170,11 +164,8 @@ Trainer notes S00 Before we start:
 - Rappeler : le sentier battu s'applique aussi a Module 1.4, le keypair est une constante.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 2 — THEORY & CONCEPTS                            -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 2 — THEORY & CONCEPTS       
 layout: section
 block: "Block 2"
 duration: "30 min"
@@ -759,11 +750,8 @@ Trainer notes S10 Northwind staging stack:
 - Verifier que tous ont l'openrc.sh du Module 1.2 fonctionnel : sinon, retour rapide sur la Hors piste avant de lancer le lab.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 3 — TRAINER DEMONSTRATION                        -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 3 — TRAINER DEMONSTRATION  
 layout: section
 block: "Block 3"
 duration: "15 min"
@@ -850,11 +838,8 @@ FAILURE MODES:
 Q&A (4 min) : focus on the API-behind-everything realization. Park cloud-init / SG hardening for Module 1.4.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 4 — LEARNER LAB                                  -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 4 — LEARNER LAB
 layout: section
 block: "Block 4"
 duration: "30 min"
@@ -979,11 +964,8 @@ SUPPORT FAQ (anticipated learner questions):
 - "Je peux SSH en root ?" : non. Toujours user par defaut, puis sudo si besoin d'elevation.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 5 — MICRO-CHECK QCM                              -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 5 — MICRO-CHECK QCM   
 layout: section
 block: "Block 5"
 duration: "5 min"
@@ -1198,11 +1180,8 @@ Trainer notes Q7:
 - Reverbaliser A02 : "no root SSH, key-only" est un reflexe Associate, non negociable.
 -->
 
-<!-- ====================================================== -->
-<!-- BLOCK 6 — WRAP-UP & TRANSITION                         -->
-<!-- ====================================================== -->
-
 ---
+# BLOCK 6 — WRAP-UP & TRANSITION 
 layout: section
 block: "Block 6"
 duration: "5 min"
