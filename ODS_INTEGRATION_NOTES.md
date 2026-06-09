@@ -26,7 +26,7 @@ npm install
 
 # 3. Restart dev server
 # (Ctrl+C if it's running, then:)
-npm run dev -- modules/module-1-1-cloud-foundations/slides.md
+npm run dev -- modules/module-x-x/slides.md
 ```
 
 ## Next step — confirm ODS tokens

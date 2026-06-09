@@ -16,7 +16,7 @@ drawings:
   persist: false
 transition: slide-left
 mdc: true
-exportFilename: 'modules/module-1-2-pci-foundation-iam/student_export'
+exportFilename: 'modules/module-1-2/student_export'
 
 # Hide the floating navbar / controls overlay in dev mode
 controls: false

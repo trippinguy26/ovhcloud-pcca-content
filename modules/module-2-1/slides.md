@@ -16,7 +16,7 @@ drawings:
   persist: false
 transition: slide-left
 mdc: true
-exportFilename: 'modules/module-2-1-storage-block-object/student_export'
+exportFilename: 'modules/module-2-1/student_export'
 
 # Hide the floating navbar / controls overlay in dev mode
 controls: false

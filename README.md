@@ -42,13 +42,13 @@ Traditional PowerPoint-based training content becomes stale the moment a service
 .
 ├── modules.json                          # Module registry (consumed by CI & landing)
 ├── modules/                              # One folder per module
-│   ├── module-1-1-cloud-foundations/
+│   ├── module-1-1/
 │   │   ├── slides.md                     # The presentation source (Slidev format)
 │   │   ├── trainer-notes.md              # Long-form trainer FAQ
 │   │   ├── lab/                          # Lab handouts and artefacts
 │   │   ├── assets/                       # Module-specific images
 │   │   └── components/                   # Module-specific Vue components (if any)
-│   └── module-1-2-pci-foundation-iam/
+│   └── module-1-2/
 │       └── slides.md
 ├── theme-ovhcloud/                       # Shared OVHcloud visual theme
 │   ├── assets/                           # Logos (master logo color + white)
@@ -82,7 +82,7 @@ Adding a new module to the build is a two-line edit:
 ```json
 {
   "id": "1.3",
-  "slug": "module-1-3-compute-instances",
+  "slug": "module-1-3",
   "title": "Compute (Part 1) — Instances, Flavors & Deployment",
   "day": 1,
   "order": 3,
@@ -102,13 +102,13 @@ Prerequisites: **Node.js ≥ 20.12**, npm.
 npm install
 
 # Launch a module in dev mode (hot reload)
-npm run dev -- modules/module-1-1-cloud-foundations/slides.md
+npm run dev -- modules/module-x-x/slides.md
 
 # Build the static HTML site for a module
-npm run build -- modules/module-1-1-cloud-foundations/slides.md
+npm run build -- modules/module-x-x/slides.md
 
 # Export to PDF
-npm run export -- modules/module-1-1-cloud-foundations/slides.md
+npm run export -- modules/module-x-x/slides.md
 
 # Generate the root landing page locally (for visual check)
 node scripts/build-index.mjs --out dist
