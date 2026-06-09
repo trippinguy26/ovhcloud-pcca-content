@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import logoWhite from '../assets/ovhcloud-logo-white.png'
+import coverWallpaper from '../wallpapers/cover_wallpaper.png'
 
 defineProps<{
   moduleId?: string
@@ -9,6 +10,11 @@ defineProps<{
 
 <template>
   <div class="slidev-layout ovh-cover">
+    <!-- Background image + Masterbrand blue overlay at 45% -->
+    <div class="ovh-cover-bg" :style="{ backgroundImage: `url(${coverWallpaper})` }"></div>
+    <div class="ovh-cover-overlay"></div>
+
+    <!-- Content sits above both layers -->
     <img :src="logoWhite" class="ovh-cover-logo" alt="OVHcloud" />
     <div class="ovh-cover-content">
       <div v-if="moduleId" class="ovh-pill">Module {{ moduleId }}<span v-if="duration"> · {{ duration }}</span></div>
@@ -20,13 +26,38 @@ defineProps<{
 
 <style scoped>
 .ovh-cover {
-  background-color: var(--ovh-masterbrand-blue);
+  background-color: var(--ovh-masterbrand-blue); /* fallback if image missing */
   color: var(--ovh-white);
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 7rem 5rem 4rem 5rem;
   position: relative;
+  overflow: hidden;
+}
+
+.ovh-cover-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+.ovh-cover-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--ovh-masterbrand-blue);
+  opacity: 0.45;
+  z-index: 1;
+}
+
+.ovh-cover-logo,
+.ovh-cover-content,
+.ovh-cover-brand {
+  position: relative;
+  z-index: 2;
 }
 
 .ovh-cover-logo {
