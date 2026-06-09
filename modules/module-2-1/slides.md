@@ -37,13 +37,8 @@ los:
   - LO-STO-S03
   - LO-STO-S04
   - LO-STO-S05
----
-
----
 # COVER SLIDE
 layout: cover
-moduleId: "2.1"
-duration: "1h30"
 ---
 
 # Storage (Part 1)
@@ -913,6 +908,11 @@ slideId: "Lab — Steps"
 &nbsp;&nbsp;&nbsp;&nbsp;<code>UUID=&lt;uuid&gt; /mnt/pgdata ext4 defaults,nofail 0 2</code><br/>
 <strong>8.</strong> <code>sudo umount /mnt/pgdata && sudo mount -a && ls /mnt/pgdata</code> &rarr; OWNER visible<br/>
 <strong>9.</strong> <code>sudo reboot</code>, wait, SSH back in, <code>df -h | grep pgdata</code> &rarr; mount persists
+<div class="mt-3 ovh-callout">
+<strong>Artifact</strong> (do NOT commit)<br/>
+<code>&lt;initials&gt;-northwind-staging/storage-notes.txt</code><br/>
+volume UUID + container name + public URL + md5 round-trip -------------- 👉🏽
+</div>
 </div>
 </div>
 <div>
@@ -931,11 +931,6 @@ slideId: "Lab — Steps"
 &nbsp;&nbsp;&nbsp;&nbsp;<code>aws s3api put-object-acl --bucket &lt;initials&gt;-nw-artifacts --key public/README.txt --acl public-read</code><br/>
 <strong>16.</strong> Incognito browser or <code>curl</code> :<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<code>https://&lt;initials&gt;-nw-artifacts.s3.gra.io.cloud.ovh.net/public/README.txt</code> &rarr; 200 + content
-</div>
-<div class="mt-3 ovh-callout">
-<strong>Artifact</strong> (do NOT commit)<br/>
-<code>&lt;initials&gt;-northwind-staging/storage-notes.txt</code><br/>
-volume UUID + container name + public URL + md5 round-trip
 </div>
 </div>
 </div>

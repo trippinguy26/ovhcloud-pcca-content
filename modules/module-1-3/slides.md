@@ -39,13 +39,8 @@ los:
   - LO-CMP-S02
   - LO-CMP-S03
   - LO-CMP-S04
----
-
----
 # COVER SLIDE
 layout: cover
-moduleId: "1.3"
-duration: "1h30"
 ---
 
 # Compute (Part 1)
