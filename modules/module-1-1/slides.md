@@ -17,12 +17,10 @@ drawings:
 transition: slide-left
 mdc: true
 exportFilename: 'modules/module-1-1/student_export'
-
 # Hide the floating navbar / controls overlay in dev mode
 controls: false
 download: false
 selectable: true
-
 # Module-level metadata (consumed by trainer-notes export and CI)
 moduleId: "1.1"
 moduleTitle: "Cloud Foundations & OVHcloud Positioning"
@@ -38,13 +36,8 @@ los:
   - LO-FND-K07
   - LO-FND-A01
   - LO-FND-A02
----
-
----
 # COVER SLIDE
 layout: cover
-moduleId: "1.1"
-duration: "1h30"
 ---
 
 # Cloud Foundations

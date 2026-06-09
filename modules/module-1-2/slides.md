@@ -17,12 +17,10 @@ drawings:
 transition: slide-left
 mdc: true
 exportFilename: 'modules/module-1-2/student_export'
-
 # Hide the floating navbar / controls overlay in dev mode
 controls: false
 download: false
 selectable: true
-
 # Module-level metadata (consumed by trainer-notes export and CI)
 moduleId: "1.2"
 moduleTitle: "Public Cloud Project, Regions & Basic IAM"
@@ -42,13 +40,8 @@ los:
   - LO-PCI-S06
   - LO-PCI-A01
   - LO-PCI-A02
----
-
----
 # COVER SLIDE
 layout: cover
-moduleId: "1.2"
-duration: "1h30"
 ---
 
 # Public Cloud Project
