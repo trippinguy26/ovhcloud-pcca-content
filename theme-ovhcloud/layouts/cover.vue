@@ -25,15 +25,19 @@ defineProps<{
 </template>
 
 <style scoped>
-.ovh-cover {
+/* Override the global .slidev-layout padding so the wallpaper truly fills the slide */
+.ovh-cover.slidev-layout {
+  padding: 0 !important;
+  margin: 0;
   background-color: var(--ovh-masterbrand-blue); /* fallback if image missing */
   color: var(--ovh-white);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 7rem 5rem 4rem 5rem;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 .ovh-cover-bg {
@@ -66,6 +70,10 @@ defineProps<{
   left: 5rem;
   height: 32px;
   width: auto;
+}
+
+.ovh-cover-content {
+  padding: 7rem 5rem 4rem 5rem;
 }
 
 .ovh-cover :deep(h1) {
