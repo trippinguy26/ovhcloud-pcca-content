@@ -53,7 +53,7 @@ defineProps<{
   position: absolute;
   inset: 0;
   background-color: var(--ovh-masterbrand-blue);
-  opacity: 0.45;
+  opacity: 0;
   z-index: 1;
 }
 

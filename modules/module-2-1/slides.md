@@ -888,14 +888,13 @@ VALIDATION CRITERIA (silent check by trainer):
 ---
 layout: default
 moduleId: "2.1"
-slideId: "Lab — Steps"
+slideId: "Lab — Steps (1/2) Block Storage"
 ---
 
-# Lab &mdash; Step-by-step
-<div class="grid grid-cols-2 gap-6 mt-2 text-xs">
-<div>
-<strong>Block Storage (openstack CLI)</strong>
-<div class="mt-2">
+# Lab &mdash; Step-by-step (1/2) &middot; Block Storage
+<div class="text-sm mt-4">
+<strong style="color: var(--ovh-masterbrand-blue);">Block Storage (openstack CLI)</strong>
+<div class="mt-3">
 <strong>1.</strong> <code>openstack volume create --size 50 --type classic &lt;initials&gt;-nw-db-data-01</code><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;Verify <code>available</code> with <code>openstack volume list</code><br/>
 <strong>2.</strong> <code>openstack server add volume &lt;initials&gt;-nw-db-01 &lt;initials&gt;-nw-db-data-01</code><br/>
@@ -908,16 +907,32 @@ slideId: "Lab — Steps"
 &nbsp;&nbsp;&nbsp;&nbsp;<code>UUID=&lt;uuid&gt; /mnt/pgdata ext4 defaults,nofail 0 2</code><br/>
 <strong>8.</strong> <code>sudo umount /mnt/pgdata && sudo mount -a && ls /mnt/pgdata</code> &rarr; OWNER visible<br/>
 <strong>9.</strong> <code>sudo reboot</code>, wait, SSH back in, <code>df -h | grep pgdata</code> &rarr; mount persists
-<div class="mt-3 ovh-callout">
-<strong>Artifact</strong> (do NOT commit)<br/>
-<code>&lt;initials&gt;-northwind-staging/storage-notes.txt</code><br/>
-volume UUID + container name + public URL + md5 round-trip -------------- 👉🏽
 </div>
 </div>
-</div>
-<div>
-<strong>Object Storage (Manager + aws-cli)</strong>
-<div class="mt-2">
+<!--
+Trainer notes Lab Steps 1/2 Block:
+- Slide de reference pour la premiere moitie du lab : laisser projete pendant les steps 1 a 9.
+- Insister oralement en debut : "creez le volume dans LA MEME AZ que nw-db-01, sinon l'attach echoue."
+- Si plusieurs learners bloquent sur lsblk qui ne voit rien : 90% du temps c'est l'AZ mismatch, le reste c'est attendre 5-10 sec.
+- Si fstab fait crasher le reboot : nofail dans les options est ce qui sauve, verifier que c'est bien dans la ligne fstab. Sinon Rescue mode (Mod 1.4) pour reparer fstab.
+
+SUPPORT FAQ (anticipated learner questions):
+- "Volume available mais attach refuse not in same AZ" : openstack volume show et server show, comparer la zone. Recreer le volume dans la bonne AZ.
+- "lsblk ne voit pas le nouveau device" : attendre 10 sec et retry. Sinon AZ mismatch.
+- "mkfs dit que le device est busy" : sudo wipefs -a /dev/sdb pour clear, puis remkfs.
+- "Apres reboot le mount est parti" : cat /etc/fstab, verifier que l'UUID matche sudo blkid. Cause classique : guillemets autour de l'UUID ou typo.
+-->
+
+---
+layout: default
+moduleId: "2.1"
+slideId: "Lab — Steps (2/2) Object Storage"
+---
+
+# Lab &mdash; Step-by-step (2/2) &middot; Object Storage
+<div class="text-sm mt-4">
+<strong style="color: var(--ovh-masterbrand-blue);">Object Storage (Manager + aws-cli)</strong>
+<div class="mt-3">
 <strong>10.</strong> Manager &gt; Public Cloud &gt; project &gt; Users & Roles &gt; Add user S3 &rarr; copy access key + secret (shown once)<br/>
 <strong>11.</strong> <code>aws configure --profile ovh-gra</code> &rarr; keys + region <code>gra</code> + format <code>json</code><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;Every <code>aws s3</code> command below : add<br/>
@@ -932,21 +947,19 @@ volume UUID + container name + public URL + md5 round-trip -------------- 👉�
 <strong>16.</strong> Incognito browser or <code>curl</code> :<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<code>https://&lt;initials&gt;-nw-artifacts.s3.gra.io.cloud.ovh.net/public/README.txt</code> &rarr; 200 + content
 </div>
+<div class="mt-4 ovh-callout">
+<strong>Artifact</strong> (do NOT commit)<br/>
+<code>&lt;initials&gt;-northwind-staging/storage-notes.txt</code><br/>
+volume UUID + container name + public URL + md5 round-trip
 </div>
 </div>
 <!--
-Trainer notes Lab Steps:
-- Slide de reference pendant le lab : laisser projete tout le long.
-- Insister oralement en debut : "creez le volume dans LA MEME AZ que nw-db-01, sinon l'attach echoue."
-- Si plusieurs learners bloquent sur lsblk qui ne voit rien : 90% du temps c'est l'AZ mismatch, le reste c'est attendre 5-10 sec.
-- Si fstab fait crasher le reboot : nofail dans les options est ce qui sauve, verifier que c'est bien dans la ligne fstab. Sinon Rescue mode (Mod 1.4) pour reparer fstab.
+Trainer notes Lab Steps 2/2 Object:
+- Slide de reference pour la seconde moitie du lab : laisser projete pendant les steps 10 a 16.
 - Eviter d'aider trop tot sur les erreurs aws-cli : laisser le learner lire le message, 70% se debloque seul.
+- Si plusieurs learners n'ont pas aws-cli installe : fallback rclone ou Manager UI pour upload / download (le credential lifecycle reste enseigne).
 
 SUPPORT FAQ (anticipated learner questions):
-- "Volume available mais attach refuse not in same AZ" : openstack volume show et server show, comparer la zone. Recreer le volume dans la bonne AZ.
-- "lsblk ne voit pas le nouveau device" : attendre 10 sec et retry. Sinon AZ mismatch.
-- "mkfs dit que le device est busy" : sudo wipefs -a /dev/sdb pour clear, puis remkfs.
-- "Apres reboot le mount est parti" : cat /etc/fstab, verifier que l'UUID matche sudo blkid. Cause classique : guillemets autour de l'UUID ou typo.
 - "aws s3 mb returns 403" : credentials pas encore actives (30-60 sec apres generation), ou endpoint URL typo.
 - "Le bucket name est deja pris" : les noms sont uniques par region dans le namespace S3 OVHcloud, prefixer initiales + date.
 - "curl public-read returns 403" : refaire put-object-acl, ou URL format faux. Le virtual-hosted-style est https://<bucket>.s3.gra.io.cloud.ovh.net/<key>.

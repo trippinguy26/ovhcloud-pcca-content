@@ -49,6 +49,15 @@
       "order": 1,
       "duration": "1h30",
       "status": "published"
+    },
+    {
+      "id": "2.2",
+      "slug": "module-2-2",
+      "title": "Storage: File, Snapshots & Backup Strategy",
+      "day": 2,
+      "order": 2,
+      "duration": "1h30",
+      "status": "published"
     }
   ]
 }

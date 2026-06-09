@@ -848,71 +848,80 @@ VALIDATION CRITERIA (silent check by trainer):
 ---
 layout: default
 moduleId: "1.4"
-slideId: "Lab — Steps"
+slideId: "Lab — Steps (1/2) SG + snapshot"
 ---
 
-# Lab — Step-by-step
+# Lab — Step-by-step (1/2)
 
-<div class="grid grid-cols-2 gap-6 mt-2 text-xs">
+## SG + snapshot — Manager UI
 
-<div>
+<div class="text-sm mt-4">
 
-<strong>SG + snapshot (Manager UI)</strong>
+**1.** `curl -s ifconfig.me` → note `<my-ip>`
 
-<div class="mt-2">
-<strong>1.</strong> <code>curl -s ifconfig.me</code> → note <code>&lt;my-ip&gt;</code><br/>
-<strong>2.</strong> Manager > Public Cloud > your project > Network > <strong>Security Groups</strong> > Create<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;Name : <code>&lt;initials&gt;-nw-ssh-office</code><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;Rule : ingress, TCP, port 22, source <code>&lt;my-ip&gt;/32</code><br/>
-<strong>3.</strong> Open <code>&lt;initials&gt;-nw-web-01</code>, attach <code>nw-ssh-office</code>, remove <code>default</code><br/>
-<strong>4.</strong> Verify : <code>ssh ubuntu@&lt;web-public-ip&gt;</code> works<br/>
-<strong>5.</strong> Instance page > <em>Actions > Create snapshot</em><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;Name : <code>&lt;initials&gt;-nw-web-01-baseline</code><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;Wait for <strong>Active</strong> in <em>Images > Snapshots</em>
-</div>
+**2.** Manager > Public Cloud > your project > Network > **Security Groups** > Create<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name : `<initials>-nw-ssh-office`<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rule : ingress, TCP, port 22, source `<my-ip>/32`
 
-</div>
+**3.** Open `<initials>-nw-web-01`, attach `nw-ssh-office`, remove `default`
 
-<div>
+**4.** Verify : `ssh ubuntu@<web-public-ip>` works
 
-<strong>Deploy api + db with cloud-init</strong>
-
-<div class="mt-2">
-<strong>6.</strong> Prepare <code>nw-api-cloudinit.yaml</code> (nginx) and <code>nw-db-cloudinit.yaml</code> (postgresql-16) — both files provided<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;Save as <strong>LF</strong>, UTF-8, no BOM<br/>
-<strong>7.</strong> Manager > Compute > Instances > <strong>Create</strong><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;Region GRA, Ubuntu 24.04, <code>d2-2</code>, your SSH key, SG <code>nw-ssh-office</code><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<strong>Paste cloud-init in User-data field</strong><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;Name : <code>&lt;initials&gt;-nw-api-01</code><br/>
-<strong>8.</strong> Repeat for <code>&lt;initials&gt;-nw-db-01</code> with the db cloud-init<br/>
-<strong>9.</strong> SSH into each : motd visible, <code>curl localhost</code> (api), <code>sudo -u postgres psql -l</code> (db)<br/>
-<strong>10.</strong> Instance page > <em>Console > View console log</em> → find <code>Cloud-init v. X.Y finished</code>
-</div>
-
-<div class="mt-3 ovh-callout">
-<strong>Artifact</strong> (do NOT commit)<br/>
-<code>&lt;initials&gt;-northwind-staging/hardening-notes.txt</code><br/>
-4 resource names + success marker line
-</div>
-
-</div>
+**5.** Instance page > *Actions > Create snapshot*
+&nbsp;&nbsp;&nbsp;&nbsp;Name : `<initials>-nw-web-01-baseline`
+&nbsp;&nbsp;&nbsp;&nbsp;Wait for **Active** in *Images > Snapshots*
 
 </div>
 
 <!--
-Trainer notes Lab Steps:
-- Slide de reference pendant le lab : laisser projete tout le long.
+Trainer notes Lab Steps 1/2:
+- Slide de reference pendant les 10 premieres minutes du lab : laisser projetee.
 - Insister oralement en debut de lab : "le SG par defaut doit etre RETIRE de nw-web-01, sinon l'IP source du SG nw-ssh-office ne sert a rien."
-- Si plusieurs learners bloquent sur SSH api/db : 90% du temps c'est cloud-init pas fini (attendre 2 min apres ACTIVE) ou indentation YAML (tab au lieu d'espaces).
-- Si l'instance reste BUILD > 3 min : verifier que le projet n'est pas en Discovery avec flavor bloque.
-- Eviter d'aider trop tot : laisser le learner lire le message d'erreur, 70% du temps il se debloque seul.
+- Si quelqu'un a son IP publique qui change entre l'etape 1 et l'etape 4 (NAT pool rotation) : re-curl ifconfig.me et editer la regle SG, c'est une realite production pas un bug.
+- Snapshot status "Queued" plus de 60 s : attendre, refresh ; pour d2-2 ca complete sous 90 s. Si ca persiste, delai infra cote OVHcloud.
+- Quand 80% de la salle est a l'etape 5 active, passer a la slide 2/2.
+-->
 
-SUPPORT FAQ (anticipated learner questions):
-- "SSH timeout sur api/db" : 90% du temps SG attache = default, pas nw-ssh-office. Verifier dans le Manager. 10% du temps l'IP publique du workstation a change, re-curl ifconfig.me.
-- "cloud-init semble pas avoir tourne" : SSH in (depuis la cle), sudo cat /var/log/cloud-init.log | tail -30. Causes : indentation tab, manque #cloud-config, CRLF si edite sous Windows sans conversion.
-- "PostgreSQL n'est pas demarre" : sudo systemctl status postgresql. Si le runcmd a echoue parce que l'install a depasse le runcmd race, sudo systemctl enable --now postgresql en manuel.
-- "Snapshot bloque en Queued" : attendre 60 s, refresh. Pour d2-2 ca complete en general en moins de 90 s. Si ca persiste, c'est un delai infra, pas une erreur learner.
-- "Je peux supprimer le SG default ?" : non, le SG default existe par projet et ne se supprime pas, on le DETACHE seulement.
+---
+layout: default
+moduleId: "1.4"
+slideId: "Lab — Steps (2/2) cloud-init deploy"
+---
+
+# Lab — Step-by-step (2/2)
+
+## Deploy api + db with cloud-init
+
+<div class="text-sm mt-4">
+
+**6.** Prepare `nw-api-cloudinit.yaml` (nginx) and `nw-db-cloudinit.yaml` (postgresql-16) — both files provided<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Save as **LF**, UTF-8, no BOM
+
+**7.** Manager > Compute > **Instances** > Create<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Region GRA, Ubuntu 24.04, `d2-2`, your SSH key, SG `nw-ssh-office`<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Paste cloud-init in User-data field**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name : `<initials>-nw-api-01`
+
+**8.** Repeat for `<initials>-nw-db-01` with the db cloud-init
+
+**9.** SSH into each : motd visible, `curl localhost` (api), `sudo -u postgres psql -l` (db)
+
+**10.** Instance page > *Console > View console log* → find `Cloud-init v. X.Y finished`
+
+</div>
+
+<div class="ovh-callout mt-4 text-xs">
+<strong>Artifact</strong> (do NOT commit) — <code>&lt;initials&gt;-northwind-staging/hardening-notes.txt</code> · 4 resource names + success marker line
+</div>
+
+<!--
+Trainer notes Lab Steps 2/2:
+- Slide de reference pendant les 20 dernieres minutes du lab : laisser projetee.
+- Si plusieurs learners bloquent sur SSH api/db : 90% du temps c'est cloud-init pas fini (attendre 2 min apres ACTIVE) ou indentation YAML (tab au lieu d'espaces).
+- "cloud-init semble pas avoir tourne" : SSH in, sudo cat /var/log/cloud-init.log | tail -30. Causes : indentation tab, manque #cloud-config, CRLF si edite sous Windows sans conversion.
+- "PostgreSQL n'est pas demarre" : sudo systemctl status postgresql ; si runcmd a echoue parce que l'install a depasse le race, sudo systemctl enable --now postgresql en manuel.
+- Eviter d'aider trop tot : laisser le learner lire le message d'erreur, 70% du temps il se debloque seul.
+- Validation silencieuse en circulant : 3 instances ACTIVE, toutes sur nw-ssh-office (aucune sur default), snapshot baseline Active, motd visible sur api+db, nginx + postgresql running.
 -->
 
 ---
