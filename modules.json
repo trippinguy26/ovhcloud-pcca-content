@@ -44,7 +44,7 @@
     {
       "id": "2.1",
       "slug": "module-2-1",
-      "title": "Storage: Block & Object",
+      "title": "Storage (Part. 1): Block & Object",
       "day": 2,
       "order": 1,
       "duration": "1h30",
@@ -53,7 +53,7 @@
     {
       "id": "2.2",
       "slug": "module-2-2",
-      "title": "Storage: File, Snapshots & Backup Strategy",
+      "title": "Storage (Part. 2): File, Snapshots & Backup Strategy",
       "day": 2,
       "order": 2,
       "duration": "1h30",
