@@ -21,14 +21,19 @@ defineProps<{
 </template>
 
 <style scoped>
-.ovh-section {
+/* Override the global .slidev-layout padding so the wallpaper truly fills the slide */
+.ovh-section.slidev-layout {
+  padding: 0 !important;
+  margin: 0;
   background-color: var(--ovh-masterbrand-blue); /* fallback if image missing */
   color: var(--ovh-white);
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 .ovh-section-bg {
@@ -51,8 +56,9 @@ defineProps<{
 .ovh-section-content {
   position: relative;
   z-index: 2;
-  max-width: 80%;
-  padding-left: 5rem;
+  max-width: 60%;
+  padding: 3rem 5rem;
+  text-align: right;
 }
 
 .ovh-section :deep(h1) {
