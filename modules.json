@@ -64,7 +64,7 @@
       "slug": "module-2-3",
       "title": "Network (Part 1): Public, Private & Security Groups",
       "day": 2,
-      "order": 2,
+      "order": 3,
       "duration": "1h30",
       "status": "published"
     },
@@ -73,7 +73,16 @@
       "slug": "module-2-4",
       "title": "Network (Part 2): vRack, Load Balancer & Gateway",
       "day": 2,
-      "order": 3,
+      "order": 4,
+      "duration": "1h30",
+      "status": "published"
+    },
+    {
+      "id": "2.5",
+      "slug": "module-2-5",
+      "title": "Identity, Access & Security — Beyond Basics",
+      "day": 2,
+      "order": 5,
       "duration": "1h30",
       "status": "published"
     }
