@@ -332,7 +332,7 @@ flowchart TB
 </div>
 
 <div class="ovh-callout mt-4">
-  <strong>OVHcloud Public Cloud Core = IaaS.</strong> Adjacent managed services (MKS, DBaaS) sit higher in the stack and are out of scope for this certification.
+  <strong>OVHcloud - Public Cloud - Core Program = IaaS.</strong> Adjacent managed services (MKS, DBaaS) sit higher in the stack and are out of scope for this certification.
 </div>
 
 <!--
@@ -401,7 +401,7 @@ Trainer notes — S04 Shared responsibility:
 layout: default
 moduleId: "1.1"
 slideId: "S05 — Public / Private / Hybrid / Multi-cloud"
-los: ["LO-FND-K04"]
+los: [ "LO-FND-K04" ]
 ---
 
 # Public, Private, Hybrid, Multi-cloud
@@ -441,17 +441,17 @@ Workloads spread across multiple cloud providers — by design or by drift.
 <!--
 Trainer notes — S05 Public/Private/Hybrid/Multi:
 - Souligner que "multi-cloud" est souvent subi (rachats, shadow IT) plus que choisi — distinguer stratégie et réalité.
-- Anticiper "Hosted Private Cloud OVHcloud, c'est quoi alors ?" → private cloud hébergé chez OVHcloud (VMware), hors scope Public Cloud Core.
+- Anticiper "Hosted Private Cloud OVHcloud, c'est quoi alors ?" → private cloud hébergé chez OVHcloud (VMware/Nutanix), hors scope Public Cloud Core.
 - Rappeler que le baremetal OVHcloud peut faire pont vers le Public Cloud via vRack — on en reparle en module 2.4.
 - Si quelqu'un demande "et le souverain ?" → c'est une propriété du cloud (public ou privé), pas un type — on creuse en S09.
-- Éviter les architectures distribuées globales — pas pour aujourd'hui.
+- Éviter les architectures Multi-AZ — pas pour aujourd'hui.
 -->
 
 ---
 layout: default
 moduleId: "1.1"
 slideId: "S06 — Cloud provider landscape"
-los: ["LO-FND-K06"]
+los: [ "LO-FND-K06" ]
 ---
 
 # The cloud provider landscape
@@ -460,7 +460,7 @@ los: ["LO-FND-K06"]
 
 <div class="ovh-callout">
 <strong>Hyperscalers</strong> — global reach, vast catalog, dominant market share, US/CN jurisdictions
-<div class="mt-1 text-sm" style="color: var(--ovh-gray-700);">AWS · Microsoft Azure · Google Cloud</div>
+<div class="mt-1 text-sm" style="color: var(--ovh-gray-700);">AWS · Microsoft Azure · GCP · Alibaba Cloud</div>
 </div>
 
 <div class="ovh-callout" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
@@ -648,7 +648,7 @@ Trainer notes S09 Differentiators:
 layout: default
 moduleId: "1.1"
 slideId: "S10 — Core qualification grid"
-los: ["LO-FND-K05", "LO-FND-A02"]
+los: [ "LO-FND-K05", "LO-FND-A02" ]
 ---
 
 # Qualifying a workload for the Core
@@ -747,7 +747,7 @@ duration: "15 min"
 layout: default
 moduleId: "1.1"
 slideId: "Demo — Manager UI walkthrough"
-los: ["LO-FND-K05", "LO-FND-K07"]
+los: [ "LO-FND-K05", "LO-FND-K07" ]
 ---
 
 # Demo — OVHcloud Manager walkthrough
@@ -793,13 +793,13 @@ PRE-FLIGHT (do BEFORE the block):
 - Browser at 125% zoom, distracting tabs closed
 
 DEMO SCRIPT (10 steps, ~10 min):
-1. www.ovh.com/manager : "Voila la porte d'entree unique pour tous les produits OVHcloud."
+1. manager.eu.ovhcloud.com : "Voila la porte d'entree unique pour tous les produits OVHcloud."
 2. Universe selector, point to Public Cloud : "Chaque univers a son propre Manager."
 3. Enter Public Cloud universe : "L'unite de facturation et d'isolation logique, c'est le projet Public Cloud, equivalent d'un compte AWS ou d'une subscription Azure."
 4. Project selector, show the demo project : "Northwind aura le sien, on le creera ensemble en 1.2."
 5. Click into the project, land on the dashboard : "Le menu de gauche est votre carte des 3 jours."
 6. Open Instances (empty or with demo VMs) : "Ici on deploiera nos VMs, on y revient en 1.3."
-7. Open Regions : "Chaque ressource vit dans une region. Souverainete = vous choisissez. On creuse en 1.2."
+7. Open fit dans une region. Souverainete = vous choisissez. On creuse en 1.2."
 8. Tour Object Storage / Block Storage / Network briefly : "Chaque section sera son propre module. Aujourd'hui, reconnaitre les noms."
 9. Open Quotas & Limits : "Garde-fou natif, on y revient en Operations (3.2)."
 10. Back to dashboard, point to Documentation & Support shortcuts : "Deux reflexes : doc sur docs.ovhcloud.com, support depuis le Manager."
