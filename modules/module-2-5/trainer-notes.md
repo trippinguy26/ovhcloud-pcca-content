@@ -1,7 +1,7 @@
 ---
 # ============================================================
 # Module 2.5 — Identity, Access & Security — Beyond Basics
-# Trainer notes — preparation deck
+# Trainer notes — preparation deck 
 # ============================================================
 theme: ../../theme-ovhcloud
 title: Identity, Access & Security — Trainer Notes
