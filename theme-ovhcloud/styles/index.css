@@ -247,6 +247,14 @@
   color: var(--ovh-brand-yellow);
 }
 
+/* Inline code inside dark-background layouts (cover, section) */
+.ovh-cover.slidev-layout code,
+.ovh-section.slidev-layout code {
+  background-color: rgba(255, 255, 255, 0.18);
+  color: var(--ovh-white);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
 /* ----- 7. Cross-reference table — docs.ovhcloud.com style -- */
 
 .ovh-xref-table table {

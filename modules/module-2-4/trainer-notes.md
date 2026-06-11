@@ -1,107 +1,197 @@
-# Module 2.4 — Network (Part 2) — vRack, Load Balancer & Gateway — Trainer FAQ
-
-**Audience**: trainer, read before the session.
-**Purpose**: vetted answers to questions the persona is most likely to ask during this module. Not a script for delivery — the in-slide notes (HTML comments in `slides.md`) carry the in-session action script. This file is the depth bench: when a learner asks the question, the trainer already knows the answer and its limits.
-
-**Module covers**: `LO-NET-K03`, `LO-NET-K04`, `LO-NET-K05`, `LO-NET-K06`, `LO-NET-K07`, `LO-NET-S05`, `LO-NET-S06`, `LO-NET-S07`, `LO-NET-A01`, `LO-NET-A02`.
-
+---
+# ============================================================
+# Module 2.4 — Network (Part 2) — vRack, Load Balancer & Gateway
+# Trainer notes — preparation deck
+# ============================================================
+theme: ../../theme-ovhcloud
+title: Network (Part 2) — Trainer Notes
+class: text-left
+mdc: true
+exportFilename: 'modules/module-2-4/trainer-notes'
+controls: false
+download: false
+selectable: true
+moduleId: "2.4"
+moduleTitle: "Network (Part 2) — vRack, Load Balancer & Gateway"
+duration: "1h30"
+program: "OVHcloud — Public Cloud — Core Associate"
+los: [LO-NET-K03, LO-NET-K04, LO-NET-K05, LO-NET-K06, LO-NET-K07, LO-NET-S05, LO-NET-S06, LO-NET-S07, LO-NET-A01, LO-NET-A02]
+layout: trainer-cover
 ---
 
-## Q1 — Why have a managed Gateway product at all? I could run a NAT instance with iptables MASQUERADE in fifteen minutes and save the bill.
+# Module 2.4 — Trainer Notes
+## Network (Part 2) — vRack, Load Balancer & Gateway
 
-Functionally a self-managed NAT instance can deliver SNAT-outbound to a private network and look identical to the managed Gateway from the inside of the private instances. Operationally the cost picture flips quickly. The self-managed path requires: a Public Cloud Instance with both an Ext-Net NIC and a private NIC, disabling Neutron's MAC/IP spoofing prevention on the NAT instance's ports via `allowed_address_pairs` (so it can emit packets with source IPs other than its own), iptables MASQUERADE rules persisted across reboots, kernel `net.ipv4.ip_forward=1`, monitoring of the instance health, OS patching and security updates, and — if redundancy matters at all — a second NAT instance with VRRP or a similar HA mechanism, which compounds the spoofing-prevention configuration. The managed Gateway is one Manager UI form, HA is internal to the product, the patching and the underlying VM are not the customer's problem, and the SNAT table is maintained transparently across maintenance. The hourly cost of the smallest Gateway tier is generally lower than the all-in cost (compute hours plus operational time plus failure-mode handling) of a properly-run self-managed pair. The decision rule at Associate scope is straightforward: use the managed Gateway. The self-managed NAT path remains valid in two narrow cases — very specific networking constraints that the managed product doesn't expose, or sandbox / training environments where the cost optimization is the lesson itself — but neither is a recommended default. The trainer-side framing that lands: "the managed product is the AWS NAT Gateway equivalent of OVHcloud — and the same logic that makes ex-AWS profiles never run their own NAT instance applies here".
-
-**LO traced**: `LO-NET-K05`.
-**Likely asker**: senior systems profile, often a Linux admin from the iptables era who has built NAT routers many times and is suspicious of paying for what they consider trivial functionality. Also occasionally asked by cost-conscious persona Digital Starter looking to trim the staging bill.
+Preparation deck · ~10 min read · Pair with `slides.md` in `/presenter`
 
 ---
-
-## Q2 — Can I share one Gateway between several private networks in the same Public Cloud project? Or do I have to deploy one Gateway per private network?
-
-One Gateway per private network. At creation time the Gateway is attached to exactly one private network, and that attachment is the only routing path the Gateway services. The architectural reason is unambiguous routing: the Gateway is the default route of its private subnet, and a one-to-many topology would require either explicit per-subnet routing logic inside the Gateway (which the product does not expose at this scope) or a more complex L3 topology with router peering, which is Professional-tier territory. The pragmatic implication is that if a project has three private networks needing outbound, the project carries three Gateways, each sized to its own private subnet's needs. This is occasionally raised as a feature request and the OVHcloud product roadmap is the right channel for that conversation; the current scoping reflects a deliberate choice to keep the routing decision unambiguous and the troubleshooting clean. For Northwind the question rarely arises because the topology is one private network for the entire stack — but it does come up when a learner extrapolates to "what if I have a microservices project with one private network per service?" The architectural answer there is to consolidate the private networks unless there is a strong isolation requirement, in which case the per-network Gateway pattern is the price of the isolation.
-
-**LO traced**: `LO-NET-K05`.
-**Likely asker**: persona Corporate with microservices background, often someone who has built segregated VPC subnets at AWS and is mapping the pattern. The question is benign but signals an operator thinking about scaling beyond the Northwind shape — useful to know what the answer is so the trainer doesn't improvise.
-
+layout: default
 ---
 
-## Q3 — How is the Load Balancer's health check actually deciding between TCP and HTTP, and which one should I pick for a real service?
+# Pre-flight
 
-A TCP health check opens a TCP connection to the configured port on each pool member at the configured interval, considers the member healthy if the three-way handshake completes within the configured timeout, and considers it unhealthy after the configured number of consecutive failures. It is fast, cheap, and detects dead instances reliably — the instance is up, the service is listening on the port, that is what the LB confirms. An HTTP health check goes further: it opens the TCP connection, sends an HTTP request (default `GET /` to the configured URL path, configurable to a dedicated `/health` endpoint), reads the response status code, and considers the member healthy if the status matches the expected code (default `200`). The HTTP check therefore catches a class of failures that TCP misses entirely: the instance is up, the TCP listener is bound, but the application has crashed or is in a degraded state returning 500s. The operational guidance at Associate scope is: TCP health check is sufficient for staging, simple services, and any case where "the port is open" is a reliable proxy for "the service works". HTTP health check is the production default for any web application, ideally pointing to a `/health` endpoint that the application implements deliberately — checking database connectivity, queue connectivity, and other liveness signals — so that the health check reflects the application's actual ability to serve traffic, not just the existence of a listening socket. The interval, timeout, and retry count are tradeoffs between detection speed and false positives under transient load: defaults are usually conservative (30s interval, 5s timeout, 3 retries) and reasonable starting points; tightening them is a Module 3.2 Operations discussion.
-
-**LO traced**: `LO-NET-K06`, `LO-NET-S05`.
-**Likely asker**: any learner with operational background, often the one configuring the LB in the lab and wondering why TCP is the default selection. The answer is also useful when the lab debugging hits an OFFLINE member — knowing whether the health check is TCP or HTTP changes the diagnostic path.
-
----
-
-## Q4 — How are the managed Let's Encrypt certificates renewed, and what happens if the renewal silently fails?
-
-OVHcloud handles the renewal automatically as long as the DNS A record (or AAAA for IPv6, where applicable) used to validate the certificate at issuance still resolves to the Load Balancer's public VIP. The renewal happens before the 90-day Let's Encrypt expiry, typically with several weeks of margin, via an automated ACME flow the customer does not see. The DNS validation is the only customer-side dependency: if the FQDN that originally validated is now pointing elsewhere — typical scenarios are a DNS migration, an FQDN reused for another service, or the trainer's DNS zone being decommissioned after a training session — the ACME challenge fails, the renewal does not complete, and the existing certificate eventually expires. The Manager surfaces the certificate status (current validity, next renewal attempt, last successful renewal) in the LB detail page, and this is part of the operational surface that the Operations module (3.2) flags as needing monitoring. A failure mode worth knowing: if the certificate expires, the HTTPS listener does not automatically fall back to HTTP, it simply serves an expired certificate, and end-user browsers reject the connection with a TLS warning. The customer-side fix is to verify the DNS, force a renewal attempt from the Manager, or — in the worst case — delete and recreate the listener with a fresh certificate. The trainer-side framing for the lab: "for today the cert renews on its own, but in production the certificate status is a monitoring item, not a fire-and-forget".
-
-**LO traced**: `LO-NET-S06`.
-**Likely asker**: any learner thinking ahead about production operations, or someone who has dealt with Let's Encrypt manually in the past and is curious how the managed flow differs. The question often arrives at slide S10 (HTTPS termination) and is worth answering crisply because it touches both the convenience of the managed product and the limit of the abstraction.
+- Module 2.3 demo state alive: `demo-web-01` + `demo-api-01` dual-NIC, tiered SGs, Floating IP on web. Regenerate via `recover-network-state.sh` if needed.
+- **Pre-baked DNS record**: `demo-northwind.<trainer-zone>` pointing to a placeholder LB VIP. Without this, the live HTTPS step waits 5 min on ACME propagation. Non-negotiable prep item.
+- **Per-learner DNS subdomains** delegated in the trainer-controlled zone. Diffuse mapping `<initials>` to FQDN on Slack or whiteboard at lab start.
+- Plan B Gateway pre-deployed in the demo project, warm standby for regional capacity glitches.
+- Manager UI open in second tab. CLI in main terminal.
+- Room check: who finished 2.3, who lost their stack overnight.
 
 ---
-
-## Q5 — How much do the four Load Balancer sizing tiers actually cost, and how should I think about the cost-throughput tradeoff?
-
-Specific pricing figures evolve and are not appropriate to memorize for delivery — the right source is the OVHcloud Public Cloud pricing page on `ovhcloud.com`, which surfaces the per-hour rate of each tier alongside the capacity figures. The pedagogical framing that holds across price changes is the shape of the curve: from S to XL, capacity (throughput, new connections per second, concurrent connections) increases more than linearly with price, meaning each step up gives more bang per euro than the previous one. This is the opposite of what naive learners often assume — they expect a flat scaling and over-provision at S to be safe, when the cleaner pattern is to start at S, monitor, and upgrade when monitoring shows sustained saturation. Because the upgrade is in-place with only a short interruption, there is little reason to over-provision in staging or in early production. The cost-throughput tradeoff that matters operationally is not "what tier do I pick", it is "what does my actual traffic profile demand" — most operators discover that S is sufficient for the first months of a production small-SaaS workload, that M handles serious e-commerce, and that L and XL are reserved for genuinely high-volume API or media workloads. The conversation worth having with the customer is what monitoring signals will tell them to upgrade — saturation of the LCU equivalent metric, growing 5xx rates correlated with traffic peaks, increased latency at the LB level. That is Module 3.2 Operations territory, but it is worth flagging during the lab when learners ask "but how do I know when to upgrade?".
-
-**LO traced**: `LO-NET-K06`.
-**Likely asker**: persona Corporate doing FinOps homework, often the operator who has been burned at AWS by an over-provisioned ALB and is suspicious of any sizing decision. Also frequently asked by persona Digital Starter weighing whether to even bother with a LB versus a single instance + Floating IP.
-
+layout: default
 ---
 
-## Q6 — Can I terminate TLS on the backend instances instead of on the Load Balancer, and what are the actual trade-offs?
+# Block 1 — Sentier battu (5 min)
 
-Yes — configure the LB pool with the `HTTPS` protocol instead of `HTTP`, install a TLS certificate on each backend instance, and the LB will forward HTTPS traffic to the backends without decrypting it (or, in the more common pattern, it will re-encrypt after decrypting at the LB, also known as end-to-end TLS). The two patterns have different operational profiles. **TLS termination at the LB** (the default at Associate scope) is the simpler operational story: one certificate to manage, one renewal flow, CPU cost of cryptography paid once at the LB, certificate rotation does not require touching any backend, and the LB-to-backend leg is plain HTTP on an isolated private network. The implicit assumption is that the private network is a trust boundary — which it usually is, but not always. **TLS termination at the backend** (or end-to-end TLS) is the right choice when compliance frameworks require encryption-in-transit all the way to the application (some healthcare, financial, or sovereign data regulations), when the private network is considered untrusted, or when there is a specific architectural reason — for instance an application layer that needs to see the original client certificate. The cost is real: every backend needs a certificate, every backend needs renewal automation, the rotation procedure must coordinate across all backends, the CPU overhead is paid per backend, and the LB cannot perform Layer-7 inspection on encrypted traffic, which limits future features like content-based routing. At Associate scope the recommendation is unambiguous: terminate at the LB. The Pro and Specialist tiers are where the trade-off conversation becomes a design decision tied to a specific compliance or architectural constraint. The trainer-side framing that lands: "TLS at the LB is the production default; TLS at the backend is a compliance or trust-boundary decision, not a performance one".
+**Posture**: rapid stack check, not a re-teach of 2.3.
 
-**LO traced**: `LO-NET-S06`.
-**Likely asker**: senior security or compliance profile, often Corporate persona with a banking, healthcare, or public-sector background who is anticipating regulatory questions. The question may not arrive in every session, but when it does, the trainer who frames it clearly avoids a 10-minute compliance digression.
+- Show of hands: stack from 2.3 still up? If <70%, launch `recover-network-state.sh` in parallel during Block 2 opener.
+- Diffuse the per-learner FQDN mapping. Write at the board so it stays visible the whole module.
+- Pre-empt the three-way confusion: *"Gateway = outbound. LB = inbound distribution. vRack = cross-product L2. Three different jobs."*
+- Close: "If anything else is missing, raise it now."
 
----
-
-## Q7 — Is vRack analogous to AWS VPC peering, and can it span across regions like GRA to BHS?
-
-The first half of the question is a "no" that needs explaining. AWS VPC peering is a Layer-3 routed connection between two VPCs: traffic flows through routed paths, IP ranges must not overlap, and the mechanism is essentially adding entries in the route tables of both VPCs. vRack is a Layer-2 underlay — same broadcast domain across attached products, ARP traffic flows, multicast can flow, and there is no routing decision at the vRack level because there is no Layer-3 routing happening at the vRack level. The closest hyperscaler conceptual analog is "Direct Connect terminating into a Transit Gateway with Layer-2 extensions", but even that is a stretch because Direct Connect is L3 at the customer-VPC level. The cleanest legacy analog is a dark-fibre L2 trunk between two physical datacenters, with the OVHcloud backbone playing the role of the inter-DC fibre and VLAN trunking carving sub-segments inside one vRack. The second half is a "yes": vRack can attach products across regions — a Public Cloud project in GRA, a Bare Metal in BHS, a Hosted Private Cloud in SBG, all on the same Layer-2 underlay, with latency following the OVHcloud backbone topology (single-digit milliseconds within Europe-North-West, higher for cross-continent attachments). Multi-DC is one of the four foundational characteristics of vRack and is a meaningful product differentiator versus the hyperscalers — none of them offers an L2 underlay across regions at this convenience and pricing. The trainer-side framing: "vRack is OVHcloud-specific. Hyperscaler equivalents exist for the L3 cross-region routed story; the L2 underlay across regions has no clean equivalent, and that is the architectural reason customers choose OVHcloud for hybrid scenarios involving Bare Metal".
-
-**LO traced**: `LO-NET-K03`, `LO-NET-S07`.
-**Likely asker**: Corporate persona with hybrid-cloud responsibilities, often the architect bridging an existing on-OVHcloud Bare Metal footprint into a new Public Cloud project. Also asked by ex-AWS profiles checking whether their VPC peering muscle memory transfers — the answer being "not really, and that is good news for hybrid Bare Metal scenarios".
+**Anti-pattern**: do not re-explain Security Groups. If a learner genuinely lost the SG model, 1-on-1 at the break.
 
 ---
-
-## Q8 — Does OVHcloud Anti-DDoS protect against application-layer attacks like HTTP flood or slow loris, and if not, what do I need on top?
-
-No. OVHcloud Anti-DDoS is a network-layer protection service that operates upstream of the customer infrastructure at the OVHcloud backbone level. It absorbs volumetric attacks (Tbps-scale traffic), filters protocol-anomaly attacks (malformed packets, fragmentation attacks, amplification via DNS, NTP, memcached, and similar reflectors), and mitigates classic network-layer floods (SYN floods, UDP floods). It is always on, included for free on every public IP of every OVHcloud service, and requires no configuration. What it does not do, and is not designed to do, is inspect the contents of legitimate-looking application traffic to detect Layer-7 abuse patterns: HTTP flood (a high rate of well-formed HTTP requests overwhelming the application), slow attacks (slowloris, slow POST, holding TCP connections open), credential stuffing, scraping, bot abuse, and the entire family of application-layer attacks that look like normal user traffic at the packet level. For those, the right tool is a Web Application Firewall (WAF) — a Layer-7 inspection product that examines HTTP requests for known attack signatures, rate-limits per source or per session, enforces challenge-response (CAPTCHA, JavaScript challenges) on suspicious patterns, and integrates with bot management. OVHcloud has WAF offerings outside the Public Cloud Core scope, and there are also third-party WAFs (Cloudflare, Imperva, AWS WAF deployed in front, others) that can be placed in front of an OVHcloud Public Cloud Load Balancer if the customer chooses. At Associate scope the message is calibration: Anti-DDoS gives the customer a baseline that ex-AWS profiles will find surprisingly generous (AWS Shield Standard is the free equivalent, AWS Shield Advanced is paid and even then narrower than the OVHcloud free baseline on network-layer absorption), but it is not a substitute for a WAF when the application is on the public Internet and the threat model includes Layer-7 abuse. The trainer-side framing: "Anti-DDoS protects the network. The application needs its own protection layer for L7 abuse — that is a separate product conversation".
-
-**LO traced**: `LO-NET-K07`.
-**Likely asker**: persona Corporate with security responsibilities, often someone whose existing security stack assumes a paid DDoS protection tier and who wants to map what they get for free on OVHcloud versus what they still need to buy on top. The question is also a useful trigger for the Module 3.2 Operations discussion about what monitoring signals reveal an L7 attack in progress.
-
+layout: default
 ---
 
-## Cross-module forward references collected from this module
+# Block 2 — Theory (30 min)
 
-For convenience, the topics the trainer is most likely to be asked about that point **forward** to later modules — useful to anchor a "we'll cover this in" answer without having to re-derive the mapping live.
+**Posture**: dense module. 12 slides, 30 min, ~2.5 min/slide. Hold the pace.
 
-| Topic raised | Forward reference |
-|---|---|
-| IAM scoping of who can deploy or modify a Gateway, a Load Balancer, or a vRack attachment | Module 2.5 — Identity & Security |
-| Secret Manager for the LB certificate private keys when using customer-provided certificates | Module 2.5 — Identity & Security |
-| IAM-rooted Security Group sources (replacing the trainer's hardcoded source IP with an identity-based reference) | Module 2.5 — Identity & Security |
-| SSH key management for the now-private API and DB instances reached via the web tier as jump host | Module 2.5 — Identity & Security |
-| Terraform for `openstack_networking_router_v2` (Gateway), `octavia_loadbalancer_v2` (LB), and the LB listener / pool / member resources | Module 3.1 — IaC Essentials |
-| cloud-init bringing up the second NIC and refreshing the default route after Ext-Net detach, instead of `dhclient -r ens4 && dhclient ens4` by hand | Module 3.1 — IaC Essentials |
-| Octavia metrics, LB monitoring dashboards, capacity-saturation signals to decide when to upgrade the LB tier | Module 3.2 — Operations & Monitoring |
-| Gateway throughput monitoring and SNAT session count saturation | Module 3.2 — Operations & Monitoring |
-| Cost monitoring across Gateway tier, LB tier, and the (now retired) Floating IP — recognizing the cost-shape of the new topology | Module 3.2 — Cost, Quotas & Support |
-| Quotas on Load Balancers, Gateways, vRack VLANs per project / per account | Module 3.2 — Operations & Quotas |
-| Layer-7 HTTP routing on the Load Balancer (path-based, host-based, header-based) | Out of scope Core Associate; Pro tier |
-| End-to-end TLS configuration with backend-side certificate management | Out of scope Core Associate; Pro tier |
-| Web Application Firewall integration in front of the Public Cloud Load Balancer | Out of scope Public Cloud Core; separate OVHcloud product family |
-| Octavia internals (amphora VMs, control plane, ACL configuration via raw API) | Out of scope Core Associate; Specialist tier |
-| vRack internals (overlay technology, leaf/spine topology, BGP peering) | Out of scope Core Associate; Specialist tier |
-| `allowed_address_pairs` configuration for software VIP, VRRP, software load balancers as alternatives to the managed LB | Out of scope Core Associate; Pro tier |
-| Cross-region private networking without vRack (region-to-region routed VPN, IPSec tunnels) | Out of scope Core Associate; Pro tier |
-| IPv6 on Load Balancer listeners, on Gateway, on vRack | Out of scope Core Associate; Pro tier |
-| Managed Kubernetes (MKS) ingress controllers and service load balancers leveraging the Public Cloud LB | Out of scope Core; MKS Associate certification |
-| Sovereign / SecNumCloud constraints on Anti-DDoS scope, LB certificate management, vRack traffic isolation | Out of scope Core; Specialist tier |
+- **S04** Gateway role: **the pivot slide of the module**. Slow down. Two phrases at the board: *"SNAT outbound"* and *"not inbound"*. Attitude reflex `A01`.
+- **S06** Floating IP vs Additional IP: closes the suspense from 2.3. *"On Public Cloud, default Floating IP. Additional IP is the Bare Metal heritage."*
+- **S09** LB sizing: do **not** cite specific throughput or pricing figures. Pricing page is authority. Pre-empt the AWS ALB auto-scaling assumption.
+- **S11** Anti-DDoS scope: it protects the network, not the application. WAF is a separate product, hors scope.
+
+**Anti-pattern**: do not improvise vRack architectural depth. Stay at the four foundational characteristics.
+
+---
+layout: default
+---
+
+# Block 3 — Demo (15 min)
+
+**Posture**: you are operating, not lecturing. Verbalize before pressing Enter.
+
+<div class="text-xs">
+
+| # | Action | Verbalize |
+|---|---|---|
+| 1-2 | Manager: Gateway create on `demo-private`, size S, then `openstack router list` | "Managed SNAT router. Active in 30 s." |
+| 3-5 | SSH api-01, `apt update` OK, then `server remove network demo-api-01 Ext-Net`, then SSH via jump host, `dhclient -r/-` + `apt update` OK | "Same instance, same apt, but the route changed. SNAT in action." |
+| 6-7 | Manager: LB create, size S, attach `demo-private`, then add listener HTTP/80 + pool + member `demo-web-01` + health TCP/80 | "Octavia under the hood. One backend equals pass-through." |
+| 8 | Laptop: `for i in {1..5}; do curl http://<vip>/; done` | "Five hits, one hostname. Now we add the second." |
+| 9-11 | Snapshot `demo-web-01`, spawn `demo-web-02` (dual-NIC), add to pool, `curl` loop 10x | "Alternating hostnames. Round-robin." |
+| 12-13 | Add HTTPS/443 listener with managed Let's Encrypt (pre-baked DNS), then `curl https://<fqdn>` | "TLS terminates here. Backends speak HTTP on the private network." |
+
+</div>
+
+**Failure modes**: Gateway stuck BUILDING > 2 min, use Plan B Gateway · `apt update` fail after detach, run `dhclient -r ens4 && dhclient ens4` to refresh default route · LB member OFFLINE, check SG ingress on health-check port (web-sg from Mod 2.3 already allows 0.0.0.0/0) · ACME validation fail, confirm `dig +short <fqdn>` resolves to LB VIP, retry.
+
+---
+layout: default
+---
+
+# Block 4 — Lab (30 min)
+
+**Posture**: circulate silently. The lab is dense, intervene on real blockers, not on early reading.
+
+- Rollout (2 min): restate brief + success criteria. Project the Lab Steps slides for the duration.
+- Top blockers: SSH session dead after Ext-Net detach (expected, use `ssh -J` jump host) · `apt update` hangs (`dhclient -r/-` to refresh) · LB member OFFLINE (nginx bound to `127.0.0.1` only) · Let's Encrypt fails (DNS not propagated, trainer zone misconfigured).
+- At 20 min, if >50% of room still on step 7-8: declare step 15 (delete legacy FIP) optional homework. Protect the HTTPS finish.
+- Close (3 min): announce 3-min warning at 27 min. Hard stop at 30. *"The LB and Gateway stay running. Mod 2.5 builds on this topology."*
+
+**Anti-pattern (yours)**: don't help on the SSH jump host before the learner has read the disconnect error. 30 s of silence unblocks 70% of them.
+
+---
+layout: default
+---
+
+# Block 5 — Micro-check (5 min)
+
+**Posture**: formative, 40 s per question average. 8 questions, watch the clock.
+
+- **Q3** (Gateway role, `K05`) and **Q5** (HTTPS prerequisite, `S06`) are the pivotal questions. Wrong equals re-anchor with S04 and S10 immediately.
+- **Q4** (LB sizing, AWS-ALB-auto-scale trap) is the calibration question for ex-AWS profiles. 3+ wrong, plan a 2-min opener at 2.5 to re-anchor `K06`.
+- **Q8** (topology recommendation, `A01`): integrative, signals overall module grip. Wrong equals revisit S04, S07-S09 in wrap-up.
+
+---
+layout: default
+---
+
+# Block 6 — Wrap-up (5 min)
+
+**Posture**: warm, conclusive. Northwind has reached production-shape network.
+
+- Recap the 10 verbs: define / distinguish / explain / describe / identify / deploy / configure / explain / recommend / apply.
+- Announce the milestone: 16 LOs of the Network domain validated (6 in 2.3 + 10 here). **Network domain closed.**
+- Walk the CTO scenario to transition to Module 2.5: the network is production-shape, but identities and secrets are still naive.
+
+**Anti-pattern**: do not start Module 2.5 here. End Day 2 on the win.
+
+---
+layout: two-cols
+---
+
+# FAQ (1/2)
+
+::left::
+
+**"Why a managed Gateway, I'd write iptables in 15 min?"**
+
+Functionally equivalent SNAT. Operationally the managed path wins on HA (internal redundancy, no failover script), patching (not customer's problem), and `allowed_address_pairs` complexity (managed product sidesteps it). The hourly Gateway cost is below the all-in cost of a properly-run self-managed HA pair.
+
+**"Can I share one Gateway between several private networks?"**
+
+No. One Gateway per private network at creation. Architectural reason: unambiguous default routing per subnet. Workaround for multi-network projects: one Gateway per network, sized per traffic profile.
+
+::right::
+
+**"TCP vs HTTP health check, which do I pick?"**
+
+TCP for staging or where "port open" reliably proxies "service works". HTTP for production with a dedicated `/health` endpoint, catches the case where the listener is up but the application is dead. Default interval, timeout, retry are reasonable starting points; tightening them is Module 3.2 territory.
+
+**"How are managed Let's Encrypt certs renewed?"**
+
+Automatic renewal as long as the DNS A record still points to the LB VIP. Manager surfaces cert status on the LB detail page. Failure mode: silent expiry if DNS gets repointed elsewhere. Monitoring item, not fire-and-forget.
+
+---
+layout: two-cols
+---
+
+# FAQ (2/2)
+
+::left::
+
+**"LB sizing cost, which tier is right?"**
+
+Specific pricing on the OVHcloud pricing page (do not memorize figures). Heuristic: start S in staging, M for small SaaS production, upgrade in-place when monitoring shows saturation. Capacity scales faster than price across tiers, over-provisioning at S is the common mistake to avoid.
+
+**"Is vRack like AWS VPC peering?"**
+
+No. VPC peering is Layer-3 routed. vRack is Layer-2 underlay, broadcast, multicast, ARP all flow. Closest legacy analog: dark-fibre L2 trunk between datacenters. Multi-region is supported (GRA + BHS + SBG on one vRack), and that's the OVHcloud differentiator.
+
+::right::
+
+**"Anti-DDoS, does it cover HTTP flood or slow loris?"**
+
+No. Anti-DDoS is network-layer: SYN, UDP floods, amplification, volumetric. Application-layer attacks (HTTP flood, slow loris, credential stuffing) need a WAF, separate product, hors scope Public Cloud Core. Frame to ex-AWS: OVHcloud's free baseline is broader than AWS Shield Standard on network-layer.
+
+**"Can I terminate TLS at the backend instead of the LB?"**
+
+Yes. Pool in `HTTPS`, cert on each backend. Trade-off: end-to-end encryption (compliance argument), CPU per backend, harder rotation. Default at Associate: terminate at the LB. End-to-end TLS is a Pro+ design decision.
+
+---
+layout: default
+---
+
+# Post-session debrief
+
+Take 10 min after the day to reflect. Inputs for the next iteration, not a hidden assessment.
+
+- Did the slide S04 (Gateway = SNAT outbound, not inbound) land cleanly? If still confused at micro-check Q3, re-anchor at 2.5 opener.
+- Did the SSH jump host pattern surprise learners more than expected? Adjust Block 1 framing next iteration.
+- Did the lab fit in 30 min for >70% of learners? If not, the HTTPS step is the cut candidate (declare it homework with a pre-baked solution).
+- Parking-lot question you couldn't answer cleanly (Octavia internals, vRack overlay tech, IPv6, L7 routing)? Add to FAQ or to the cross-module table before next delivery.
