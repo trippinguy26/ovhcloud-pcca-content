@@ -1,89 +1,194 @@
-# Module 2.1 — Storage (Part 1) — Block & Object — Trainer FAQ
-
-**Audience**: trainer, read before the session.
-**Purpose**: vetted answers to questions the persona is most likely to ask during this module. Not a script for delivery — the in-slide notes (HTML comments in `slides.md`) carry the in-session action script. This file is the depth bench: when a learner asks the question, the trainer already knows the answer and its limits.
-
-**Module covers**: `LO-STO-K01`, `LO-STO-K02`, `LO-STO-K03`, `LO-STO-S01`, `LO-STO-S02`, `LO-STO-S03`, `LO-STO-S04`, `LO-STO-S05`.
-
+---
+# ============================================================
+# Module 2.1 — Storage (Part 1) — Block & Object
+# Trainer notes — preparation deck
+# ============================================================
+theme: ../../theme-ovhcloud
+title: Storage (Part 1) — Trainer Notes
+class: text-left
+mdc: true
+exportFilename: 'modules/module-2-1/trainer-notes'
+controls: false
+download: false
+selectable: true
+moduleId: "2.1"
+moduleTitle: "Storage (Part 1) — Block & Object"
+duration: "1h30"
+program: "OVHcloud — Public Cloud — Core Associate"
+los: [LO-STO-K01, LO-STO-K02, LO-STO-K03, LO-STO-S01, LO-STO-S02, LO-STO-S03, LO-STO-S04, LO-STO-S05]
+layout: trainer-cover
 ---
 
-## Q1 — How "S3-compatible" is OVHcloud Object Storage really? Can I take my AWS S3 Terraform module and point it at OVHcloud?
+# Module 2.1 — Trainer Notes
+## Storage (Part 1) — Block & Object
 
-The S3-compatible API on OVHcloud covers all the core operations: `PUT`, `GET`, `DELETE`, `LIST`, multipart upload, basic ACLs, presigned URLs. The vast majority of S3 client libraries (boto3, AWS SDKs, `aws-cli`, `s3cmd`, `rclone`, MinIO client, Terraform's `aws_s3_bucket` resource with a custom endpoint) work out of the box. Where the API diverges is on the advanced surfaces: certain S3 lifecycle policies, some CORS edge cases, S3 Object Lock, cross-region S3 Replication, certain Server-Side Encryption modes (CMK/KMS-managed keys), S3 Select, S3 Inventory. The pragmatic recipe for a Terraform module: set `endpoint`, `skip_credentials_validation`, `skip_metadata_api_check`, `skip_requesting_account_id`, and `force_path_style` in the AWS provider, and verify on `docs.ovhcloud.com` whether the specific features your module uses are supported. The Pro tier of the certification covers the compatibility matrix in depth.
-
-**LO traced**: `LO-STO-K03`, `LO-STO-S04`.
-**Likely asker**: Corporate persona, ex-AWS developer or DevOps. This is the single most-asked question of the module.
+Preparation deck · ~10 min read · Pair with `slides.md` in `/presenter`
 
 ---
-
-## Q2 — Why is Block Storage AZ-scoped and Object Storage region-scoped? It seems arbitrary.
-
-It reflects the underlying storage technology and consistency model. A Block Storage volume is presented to the OS as a coherent block device with strict consistency — every read sees the latest write, atomically. To deliver that at low latency, the storage backend must be physically close to the compute, in the same failure domain (the AZ). Replicating a block volume synchronously across AZs would multiply the write latency by the inter-AZ network latency, which is the wrong trade-off for a primary storage path. Object Storage, by contrast, deals with whole objects whose consistency expectations are different (no in-place byte updates), and the access path is HTTP — naturally tolerant to a few extra milliseconds. Swift replicates across AZs by design, which is what gives Object Storage its region-scoped reachability. The architectural moral: pick the storage primitive that matches both your access pattern and your acceptable consistency/latency trade-off.
-
-**LO traced**: `LO-STO-K02`, `LO-STO-K03`.
-**Likely asker**: any persona with an architecture background. Often arrives as a "design rationale" question rather than an operational one.
-
+layout: default
 ---
 
-## Q3 — Can a Block Storage volume really only attach to one instance? What about clustered filesystems like OCFS2 or GFS2 that expect shared block?
+# Pre-flight
 
-Correct, OVHcloud Block Storage is strictly single-attach in the Core scope. Clustered filesystems that expect shared block access (OCFS2, GFS2, VMFS-style) cannot be built on top of OVHcloud Block Storage as-is. If the requirement is genuinely a shared filesystem, the correct primitive is File Storage (Module 2.2), which exposes NFS-style multi-attach semantics with native filesystem-level locking. If the requirement is shared block access for a non-clustered workload, the design is usually wrong — there is almost always a better pattern using either File Storage (for shared filesystems), Object Storage (for shared immutable assets), or application-level data partitioning (each instance has its own block, application coordinates). Multi-attach Cinder exists in some upstream OpenStack deployments but is not exposed in the Core OVHcloud product line.
-
-**LO traced**: `LO-STO-K02`.
-**Likely asker**: Corporate persona, ex-VMware or HPC background. Sometimes arrives via "how do I do shared SAN on cloud?"
-
----
-
-## Q4 — We're moving from AWS to OVHcloud. On AWS, our staging environment has cross-region S3 replication for disaster recovery. How do we replicate that on OVHcloud?
-
-Cross-region replication on OVHcloud Object Storage is an evolving area — verify the current state of the feature on `docs.ovhcloud.com`, as native cross-region replication may or may not be exposed depending on the offer and the moment. The pragmatic patterns in the meantime: (1) write to two regions in parallel from the application layer for new objects (dual-write pattern); (2) schedule a periodic `aws s3 sync` (or `rclone sync`) job from the primary region to a secondary region — runs from a small Compute instance or from your CI; (3) for the DR scenario specifically, write critical objects to a primary region and a Cold Archive bucket in a secondary region with `aws s3 sync` daily. The strategic question to ask the customer back: how much data loss is acceptable in a region-wide outage (RPO)? That number drives the replication frequency choice.
-
-**LO traced**: `LO-STO-K03`, `LO-STO-S04`.
-**Likely asker**: Corporate persona migrating workloads, often the lead architect.
+- `openrc.sh` from Module 1.2 still valid. Regenerate if expired.
+- `demo-db-01` and `demo-web-01` from Module 1.4 demo project alive, both in the same AZ. Same SSH key as 1.4.
+- `aws-cli` v2 on the demo workstation. Profile `ovh-gra` ready with the endpoint URL pre-filled — credentials generated **live** in the demo for pedagogy.
+- Manager open in a second tab on the demo project, Users & Roles page one click away.
+- Test files ready on the workstation: `sample-artifact.tgz` (~5 MiB) and a tiny `README.txt`.
+- Plan B: a volume already attached to `demo-web-01` in case step 8 hangs.
+- Room check: who has `nw-db-01` running from Day 1, who needs the hors piste redeploy.
 
 ---
-
-## Q5 — How do I rotate S3 credentials safely without breaking the running applications that use them?
-
-The clean rotation pattern has three steps: (1) generate a new set of credentials in the Manager for the same project — both old and new are active simultaneously; (2) update the applications to use the new credentials (gradual rollout, blue-green, whatever fits your deployment model); (3) once you have verified no application is still using the old credentials (typically by monitoring request logs on Object Storage if available, or by waiting beyond the longest possible credential cache TTL), revoke the old credentials in the Manager. The anti-pattern is to revoke the old credentials first and then update the apps — that is a self-inflicted outage. For applications that store credentials in environment variables, rotation requires a redeploy; for applications that fetch credentials at startup from a secret store, rotation is cleaner. The deeper secret-management discussion belongs to Module 2.5.
-
-**LO traced**: `LO-STO-S05`.
-**Likely asker**: developer persona or security/compliance representative. Often comes up specifically when the auditor's calendar approaches.
-
+layout: default
 ---
 
-## Q6 — What's the actual durability of Object Storage? AWS S3 advertises eleven 9s — what does OVHcloud guarantee?
+# Block 1 — Sentier battu (5 min)
 
-The durability figure is the percentage of objects expected to survive over a year, derived from the replication strategy and the storage hardware reliability model. OVHcloud's published durability for Object Storage is high (verify the exact figure on `ovhcloud.com` — typically in the same order of magnitude as hyperscalers for the region-scoped tier), but the practical answer most customers care about is not the figure, it is the scenarios it covers. Hardware failure on a single disk, a rack, a server room? Yes. Region-wide disaster (fire, flood)? No — the figure assumes a single region; cross-region DR is a separate design (see Q4). Application bug that deletes objects? No — durability does not cover deliberate deletions; versioning and backup do. The honest message to learners: durability is a number that bounds the worst case for hardware failure, it does not replace a backup strategy that covers human and application failure modes.
+**Posture**: quick continuity check, not a recap of Day 1.
 
-**LO traced**: `LO-STO-K03`.
-**Likely asker**: Corporate persona, often the risk/compliance representative or a senior architect. The question is usually a probe to see if the trainer knows the difference between durability and backup.
+- Show of hands on `<initials>-nw-db-01` running. Below 50% → run hors piste redeploy (Mod 1.3 sequence) in parallel during Theory opener.
+- `aws-cli` installed? Below 50% → 30 sec install (`pip install awscli` or `snap install aws-cli`) before Theory.
+- Close: *"If anything else is missing, raise it now. Theory won't pause."*
 
----
-
-## Q7 — When does `high-speed-gen2` actually make a difference compared to `high-speed`? Is the price premium worth it?
-
-`high-speed-gen2` is NVMe-backed; `high-speed` is SSD-backed but a generation older. The performance gap matters when the workload is bound by IOPS or by tail latency at high concurrency. Practical scenarios where the gap shows: OLTP databases serving thousands of small transactions per second (`high-speed-gen2` reduces 99th-percentile latency noticeably), heavily indexed workloads with random reads across a large working set, real-time analytics workloads. Scenarios where the gap is invisible: general-purpose app servers, batch processing, low-traffic databases, anything dominated by network or CPU. The pragmatic decision rule: start with `high-speed` for production, observe latency metrics (PostgreSQL: `pg_stat_statements` for query latency; OS: `iostat -x` for `await`), upgrade to `high-speed-gen2` only if the storage layer is provably the bottleneck. Over-provisioning is a FinOps concern that belongs to the Pro tier — but the Core reflex is: measure first, upgrade second.
-
-**LO traced**: `LO-STO-K02`, `LO-STO-S01`.
-**Likely asker**: Corporate persona with database responsibility, or Digital Starter persona surprised by the bill. Comes up specifically during the tier slide (S04) or after the lab when learners look at prices.
+**Anti-pattern**: do not re-explain instance lifecycle here. Day 2 starts moving forward.
 
 ---
+layout: default
+---
 
-## Cross-module forward references collected from this module
+# Block 2 — Theory (30 min)
 
-For convenience, the topics the trainer is most likely to be asked about that point **forward** to later modules — useful to anchor a "we'll cover this in" answer without having to re-derive the mapping live.
+**Posture**: 3 min/slide average. The block-vs-object mental model is the whole module.
 
-| Topic raised | Forward reference |
-|---|---|
-| Volume snapshots, application-consistent volume backup, Instance Backup service | Module 2.2 — File Storage, Snapshots & Backup Strategy |
-| File Storage / shared filesystem semantics (NFS-like, multi-attach) | Module 2.2 — File Storage |
-| Cold Archive for long-term retention (legal, compliance) | Module 2.2 — Cold Archive |
-| Private network between instances and storage endpoints (S3 over private link) | Module 2.3 — Private Network |
-| IAM scoping of S3 credentials per user, per container, role separation | Module 2.5 — Identity & Security |
-| Terraform / OpenTofu for `openstack_blockstorage_volume_v3` + `openstack_objectstorage_container_v1` | Module 3.1 — IaC Essentials |
-| Observability of storage IOPS, latency, error rates | Module 3.2 — Observability |
-| Managed Databases as alternative to PostgreSQL self-managed on a block volume | Out of scope Core; DBaaS Associate certification |
-| Advanced S3 features (Object Lock, Replication, Lifecycle policies, Inventory, Select) | Out of scope Core Associate; Pro tier |
-| FinOps storage cost optimization (right-tiering, lifecycle to Cold, egress patterns) | Out of scope Core Associate; Pro tier |
-| Sovereign / SecNumCloud Object Storage offers | Out of scope Core; Specialist tier |
+- **S01** opener: verbalize the cultural shift. *"Compute is disposable. Data is the only asset."* Day 1 set this up; today we install the reflex.
+- **S02** access patterns: this is the slide that frames everything. Ask one learner to place a workload before moving on.
+- **S06** S3-as-translation-layer: be honest. *"95%+ compat, edges exist."* Ex-AWS learners reward honesty here, punish overclaim.
+- **S09** decision diagram: the "aha" of the module. 2 min of interaction — get 2 learners to place a workload in the tree.
+
+**Anti-pattern**: do not recite IOPS numbers per tier. The doc is authority.
+
+---
+layout: default
+---
+
+# Block 3 — Demo (15 min)
+
+**Posture**: you are operating, not lecturing. Verbalize the choice before pressing Enter.
+
+<div class="text-xs">
+
+| # | Action | Verbalize |
+|---|---|---|
+| 1-2 | `openstack volume create --size 20 --type classic demo-db-data-01` then `volume list` | *"`--type classic` = tier choice. Exists, attached to nothing."* |
+| 3-4 | `server add volume demo-db-01 ...`, SSH in, `lsblk` | *"Linux sees a new block device. Empty disk."* |
+| 5-6 | `mkfs.ext4`, mount, write MARKER | *"UUID for fstab. MARKER proves the write."* |
+| 7-9 | umount, detach, re-attach to `demo-web-01`, SSH, mount, `cat MARKER` | *"The data traveled with the volume. Single-attach: was free, is owned again."* |
+| 10-11 | Manager → Users & Roles → generate S3 user. `aws configure --profile ovh-gra` | *"Secret shown once. `--endpoint-url` is the only difference from AWS."* |
+| 12-13 | `aws s3 mb`, `cp`, `ls` with `--endpoint-url https://s3.gra.io.cloud.ovh.net` | *"`app/` is just a key prefix, not a real folder."* |
+| 14 | `put-object-acl --acl public-read`, `curl` the public URL | *"No `aws-cli` needed to fetch. URL = the bucket DNS."* |
+
+</div>
+
+**Failure modes**: lsblk shows nothing → wait 10 s, then suspect AZ mismatch · mount fails "wrong fs type" → not formatted yet · `s3 mb` returns 403 → creds not propagated (30-60 s) or endpoint typo · `curl` 403 → wrong URL format (use virtual-hosted style).
+
+---
+layout: default
+---
+
+# Block 4 — Lab (30 min)
+
+**Posture**: circulate silently. Intervene only on blockers.
+
+- Rollout (2 min): restate brief + success criteria. Project Lab Steps (1/2) then (2/2) as the room progresses.
+- Top blockers: AZ mismatch on attach · fstab UUID typo causes reboot to lose mount (`nofail` saves it) · `aws-cli` not pointed at the OVHcloud endpoint · public-read URL format wrong.
+- Mid-block check at 15 min: room should be on step 10. If <50% are, cut the public-read step (step 15-16) and declare it homework.
+- Close (3 min): at 27 min announce 3-min warning. *"Volume stays attached, container stays up. Both reused in Module 2.2."*
+
+**Anti-pattern (yours)**: don't help too early on aws-cli errors. The message is usually self-explanatory.
+
+---
+layout: default
+---
+
+# Block 5 — Micro-check (5 min)
+
+**Posture**: formative, 40 s per question average.
+
+- **Q1** (Block vs Object for PostgreSQL) and **Q3** (Object Storage facts) anchor `K01` and `K03`. Wrong on either → reframe with S02 access patterns immediately.
+- **Q5** (resize + filesystem extend) is the trap. Wrong here is a sign the OS/cloud boundary is not yet internalized — flag for Module 2.2.
+- 3+ wrong on Q1 → plan a 2-min opener tomorrow to re-anchor `K01`.
+
+---
+layout: default
+---
+
+# Block 6 — Wrap-up (5 min)
+
+**Posture**: warm, conclusive. Set up Module 2.2 without starting it.
+
+- Recap the verbs: distinguish, explain, create, attach, resize, detach, manipulate, set.
+- Reinforce *"Block for state, Object for shared, File coming next."*
+- Walk the CTO scenario for 2.2: legal PDFs (Cold Archive), shared filesystem (File Storage), backup story (Snapshots + Instance Backup).
+
+**Anti-pattern**: do not start Module 2.2. Let the day breathe.
+
+---
+layout: two-cols
+---
+
+# FAQ (1/2)
+
+::left::
+
+**"How S3-compatible really?"**
+
+95%+ for CRUD: PUT, GET, DELETE, LIST, multipart, ACLs, presigned. Edges on lifecycle policies, Object Lock, cross-region Replication, KMS-managed encryption, S3 Select. Terraform pattern: AWS provider with `endpoint`, `force_path_style`, the three `skip_*` flags. Verify on `docs.ovhcloud.com` per feature.
+
+**"Block AZ vs Object region — why?"**
+
+Strict consistency at low latency requires the storage close to the compute = same AZ. Object's HTTP / whole-object model tolerates inter-AZ latency = Swift replicates across AZs. Pick the primitive that matches access pattern + consistency need.
+
+::right::
+
+**"Single-attach — what about OCFS2 / GFS2?"**
+
+Not supported on Core OVHcloud Block. If genuinely shared filesystem needed → File Storage (Module 2.2). If shared block for non-clustered workload → design is usually wrong, partition at app layer.
+
+**"Cross-region replication for DR?"**
+
+Native may or may not be exposed — verify on docs. Patterns: dual-write from app layer, scheduled `aws s3 sync` from a small instance, or daily sync to Cold Archive in secondary region. The RPO question drives the choice.
+
+---
+layout: two-cols
+---
+
+# FAQ (2/2)
+
+::left::
+
+**"How to rotate S3 credentials safely?"**
+
+Three steps: (1) generate new creds — both old and new active. (2) Update apps gradually. (3) Once no app uses old creds, revoke. Anti-pattern: revoke first, update second = self-inflicted outage.
+
+**"Object Storage durability — eleven 9s?"**
+
+Verify exact figure on `ovhcloud.com`. The honest message: durability bounds hardware failure worst case, it does NOT cover region disaster (cross-region DR is a separate design) nor human deletion (versioning + backup do).
+
+::right::
+
+**"high-speed vs high-speed-gen2 — worth it?"**
+
+`gen2` is NVMe. Matters for OLTP, high-concurrency, latency-sensitive. Invisible for general app servers, batch, low-traffic DBs. Decision rule: start with `high-speed`, measure (`iostat -x` await, `pg_stat_statements`), upgrade only if storage is provably the bottleneck.
+
+---
+layout: default
+---
+
+# Post-session debrief
+
+Take 10 min after the day to reflect. Inputs for the next iteration, not a hidden assessment.
+
+- Did the block-vs-object mental model land at S02 + S09? If not, plan a 2-min re-anchor at Module 2.2 opener.
+- Did the lab fit in 30 min for >80% of learners? AZ mismatch and fstab typos are the time sinks — both deserve a sharper rollout next time.
+- Did the S3-compat honesty in S06 land well or generate confusion? Calibrate for next delivery.
+- Parking-lot question you couldn't answer cleanly? Add to FAQ before next delivery.
