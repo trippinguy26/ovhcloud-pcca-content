@@ -1,205 +1,150 @@
----
-# ============================================================
-# Module 2.5 — Identity, Access & Security — Beyond Basics
-# Trainer notes — preparation deck
-# ============================================================
-theme: ../../theme-ovhcloud
-title: Identity, Access & Security — Trainer Notes
-class: text-left
-mdc: true
-exportFilename: 'modules/module-2-5/trainer-notes'
-controls: false
-download: false
-selectable: true
-moduleId: "2.5"
-moduleTitle: "Identity, Access & Security — Beyond Basics"
-duration: "1h30"
-program: "OVHcloud — Public Cloud — Core Associate"
-los: [LO-SEC-K01, LO-SEC-K02, LO-SEC-K03, LO-SEC-K04, LO-SEC-K05, LO-SEC-K06, LO-SEC-S01, LO-SEC-S02, LO-SEC-S03, LO-SEC-S04, LO-SEC-S05, LO-SEC-A01, LO-SEC-A02]
-layout: trainer-cover
----
+# Module 2.5 — Identity, Access & Security — Beyond Basics — Trainer FAQ
 
-# Module 2.5 — Trainer Notes
-## Identity, Access & Security — Beyond Basics
+**Audience**: trainer, read before the session.
+**Purpose**: vetted answers to questions the persona is most likely to ask during this module. Not a script for delivery — the in-slide notes (HTML comments in `slides.md`) carry the in-session action script. This file is the depth bench: when a learner asks the question, the trainer already knows the answer and its limits.
 
-Preparation deck · ~10 min read · Pair with `slides.md` in `/presenter`
+**Module covers**: `LO-SEC-K01`, `LO-SEC-K02`, `LO-SEC-K03`, `LO-SEC-K04`, `LO-SEC-K05`, `LO-SEC-K06`, `LO-SEC-S01`, `LO-SEC-S02`, `LO-SEC-S03`, `LO-SEC-S04`, `LO-SEC-S05`, `LO-SEC-A01`, `LO-SEC-A02`.
 
 ---
-layout: default
----
 
-# Pre-flight
+## Q1 — Why two IAM layers at all? Isn't this just OVHcloud complexity for the sake of complexity, when AWS does it with a single IAM?
 
-- Northwind 2.4 stack alive (LB+HTTPS, Gateway, API/DB private-only). If down, `module-2-4/recover-network-state.sh` (~5 min).
-- Trainer = admin on the OVHcloud organization. Customer-org training → switch to the prepared sub-account before the session.
-- Second browser ready for private-window sign-in as `demo-developer` at demo step 4.
-- Two findings pre-planted on the demo project: trainer = `administrator` (should be `member`) + one orphan IAM user. Surface at demo steps 10-11.
-- `fetch-secret.sh` deployed on `demo-api-01` at `/usr/local/bin/`.
-- Closing module of Day 2, end of afternoon. High-leverage — anchor S04 (two gates) and S07 (app credentials) above all else.
+The two layers reflect the architecture, not a product decision. OpenStack ships with its own identity service — Keystone — which is project-scoped and bound to the OpenStack APIs natively. Any cloud built on OpenStack inherits Keystone as the gatekeeper for what happens inside a project: creating instances, attaching volumes, manipulating networks, opening Security Groups. OVHcloud wraps a wider account-level identity around that — Billing, Support tickets, project lifecycle, vRack management, multi-product views — and that wrapper needs its own identity layer because Keystone simply does not govern those concerns. Collapsing the two layers into one would mean either limiting what OVHcloud IAM can govern (everything OpenStack-native would still need Keystone underneath, hidden but present), or breaking compatibility with the OpenStack upstream — which is a non-starter for a Core layer whose value proposition is OpenStack-native. AWS made a different architectural choice: AWS did not build on top of an open-source upstream with its own identity service, so they could collapse everything into one IAM. The trade-off is that AWS IAM is monolithic and the learning curve is steep; OVHcloud IAM is decomposed, the learning curve has a clear pivot (the two-gate model from slide 4), and the upside is that OpenStack tooling — Terraform OpenStack provider, OpenStack CLI, Horizon, custom scripts — works out of the box without OVHcloud-specific glue. The trainer-side framing that lands: "two layers is the cost of being OpenStack-native at the Core. Once you internalize OVHcloud IAM = corporate AD and Keystone = local groups on a server, the architecture stops feeling like complexity and starts feeling like a clean separation of concerns".
+
+**LO traced**: `LO-SEC-K01`.
+**Likely asker**: persona Corporate with deep AWS muscle memory, often arriving with the assumption that "real cloud" means a single IAM. The question typically lands at slide 2 or 3 and is the most common point at which the learner either accepts or rejects the rest of the module. Worth answering crisply and once, then moving on.
 
 ---
-layout: default
----
 
-# Block 1 — Sentier battu (5 min)
+## Q2 — What exactly happens if I grant a user an OVHcloud IAM policy on a Public Cloud project but no OpenStack role? They sign in, they see the project, and then?
 
-**Posture**: rapid check-in, not a lecture.
+They sign in to the Manager, the project appears in their navigation, they can click into it, and from there the experience varies depending on which Manager view they open. Some views read from OVHcloud APIs that authorize via IAM only (project metadata, billing exposure if their policy allows it, support ticket creation referencing the project) — those work. But any view that fetches resource data from the OpenStack APIs underneath — the instance list, the network list, the volume list, the Security Groups view, the Object Storage browser — calls Keystone-protected endpoints, and Keystone returns no resources because the user has no role on the project. The Manager generally renders these views as empty rather than as an error, which is the source of the confusion: the user concludes "the project is empty" or "the project is broken" when in reality their Gate 2 (slide 4) is closed. The fastest diagnostic is `openstack role assignment list --user <user> --project <project> --names` from a separate admin session — if it returns no rows, the user has no Keystone role and that explains the symptom. The fix is to grant them the appropriate OpenStack role (`administrator`, `member`, or `reader`) via the Manager's project access settings or via the OpenStack CLI directly. This is one of the highest-recurrence support questions in the OVHcloud Public Cloud space and the reason slide 4 of this module exists — knowing the answer in your sleep saves the trainer from a 15-minute debugging digression in the lab.
 
-- Hands up on OVHcloud org admin access. <80% → switch to the sub-account now, not at demo step 1.
-- Northwind 2.4 up? If >30% out, fire `recover-network-state.sh` during this block.
-- Test private-window sign-in: not trivial for everyone, surfacing now saves 10 min at the lab.
-- Close: *"OVHcloud IAM = account-wide, Keystone = inside one project. Both required. Proven slide 4."*
-
-**Anti-pattern**: do not start explaining the two-layer model here. Calibration only.
+**LO traced**: `LO-SEC-K01`.
+**Likely asker**: any learner during the lab who has experimented with creating a colleague-style user and granted them only the IAM side, then comes back puzzled. Also asked theoretically during the slide-4 walkthrough by careful learners trying to map the model to their reality.
 
 ---
-layout: default
----
 
-# Block 2 — Theory (30 min)
+## Q3 — Conversely, what if a user has the OpenStack role on a project but no OVHcloud IAM access? Can they still operate the project through the OpenStack CLI?
 
-**Posture**: 2.5 min/slide average. High-value moments; routine slides follow `slides.md` inline notes.
+In theory yes, in practice no. The theoretical answer is that if the user has already obtained valid OpenStack credentials — a working `openrc.sh` or an application credential — they can hit the OpenStack APIs directly without ever touching the OVHcloud Manager, and Keystone will authorize them on the basis of their role. The OVHcloud edge does enforce IAM ahead of Keystone for the OVHcloud APIs, but the OpenStack APIs are exposed on their own endpoints and Keystone is the authority on its own surface. The practical answer is that this scenario does not arise organically: without OVHcloud IAM access, the user has no way to obtain those OpenStack credentials in the first place. They cannot sign in to the Manager to download an `openrc.sh`, they cannot open Horizon to generate an application credential, and they cannot be granted the OpenStack role without an underlying OVHcloud identity to assign it to. The only way to reach this asymmetric state is for an administrator to have explicitly extracted OpenStack credentials and handed them out separately — which is itself a credential-mismanagement antipattern and exactly what the Secret Manager and application credential discipline of this module exists to prevent. Treat the scenario as a theoretical curiosity that helps confirm the mental model from slide 4: it demonstrates that the two gates are genuinely independent at the API level, even though the user-facing flow makes Gate 1 the prerequisite for everything.
 
-- **S02** two-layer model: 2 full min. AD analogy for legacy profiles. Ex-AWS: *"AWS has one IAM; OVHcloud has two because Public Cloud is OpenStack-native."*
-- **S04** two gates: *pivot slide*. Demand the room recites *"IAM allows but call fails = no Keystone role"*. If not, redo.
-- **S07** app credentials: anchor reflex `A02`. *"Non-interactive workload = app credential, no exception."*
-- **S09** KMS: stay honest. Awareness, not skill. *"List evolves, check docs."*
-- **S10** audit reflex: *"Goal is not zero findings, goal is to know where they are."*
-
-**Anti-pattern**: don't recite the predefined policy list. Manager UI is authority, the set evolves.
+**LO traced**: `LO-SEC-K01`.
+**Likely asker**: persona Corporate with deep security background asking edge-case questions to test the model, or a sharp learner who has noticed the asymmetric phrasing of the two-gate diagram on slide 4. The question is benign but signals strong engagement with the material — worth answering with care, even though the answer is short in operational terms.
 
 ---
-layout: default
----
 
-# Block 3 — Demo (15 min)
+## Q4 — Should policies be attached to users or to groups? The Manager UI seems to let me do both — when would I attach a policy directly to a user?
 
-**Posture**: operating, not lecturing. Two browsers visible.
+Always to groups, with users joining groups. The Manager allows direct attachment to users for two reasons that turn out to be the same reason: short-term experimentation during initial setup, and one-off exceptions explicitly documented as exceptions. Both should be considered failure modes in production. The maintainability argument is the entire reason groups exist as a concept: when a person's role changes, you move them between groups; when the role itself evolves, you edit the group's policy and every member inherits the change; when a person leaves, you remove them from groups and their credentials die in one click. Per-user policy attachment loses all three of those properties. It also loses auditability: explaining "why does user X have this permission" becomes a per-user investigation instead of a group-level lookup. The pragmatic test the trainer can pose to the room: "if you had to explain to your security officer in 30 seconds who has admin on production, could you?" — with groups, the answer is "everyone in the admins group". With per-user attachment, the answer is "let me cross-reference the user list against the policy attachment list". The right policy attachment to a user happens roughly zero times per quarter in a well-run team. If it happens more often, the segmentation is wrong and the right answer is to refine the group set, not to keep patching with per-user grants.
 
-<div class="text-xs">
-
-| # | Action | Verbalize |
-|---|---|---|
-| 1-3 | IAM user `demo-developer` + policy duplicate-trim + group `demo-devs` | *"Groups own policies, users join groups."* |
-| 4 | Private browser as `demo-developer`, demo project | *"Visible. Delete — blocked. Billing — blocked."* |
-| 5-7 | App credential `member` 24h restricted **off** → `server list` OK → `image create --public` 403 | *"Scope confirmed. Backup tries this → fails fast."* |
-| 8-9 | Secret Manager → `demo-postgres-password` → SSH `demo-api-01` → `fetch-secret.sh` | *"Encrypted. Lab wires this into systemd ExecStartPre."* |
-| 10-12 | `role assignment list` over-priv · orphan filter · `app credential list` expired | *"Three findings, five seconds. Reflex `S05`."* |
-
-</div>
-
-**Failures**: Step 4 → IAM propagation up to 30s · Step 6 → `OS_AUTH_TYPE=v3applicationcredential` missing · Step 9 403 → credential lacks secret read, surface live · Step 10 empty → add `--project-domain default`.
+**LO traced**: `LO-SEC-K02`, `LO-SEC-A01`.
+**Likely asker**: any learner during the lab who is creating their first IAM user and notices the per-user attach option. Also commonly asked by persona Digital Starter who is alone and thinks "groups are overkill for a one-person team" — the answer there is at Q13 (Digital Starter framing), but the per-user-vs-group answer applies the same.
 
 ---
-layout: default
----
 
-# Block 4 — Lab (30 min)
+## Q5 — Which predefined IAM policies are available out of the box, and where do I find an authoritative list?
 
-**Posture**: circulate silently. Identity bugs are subtle; let learners read errors.
+The Manager UI under Identity and Access → Policies → Predefined is the only source that should be considered authoritative — the predefined set evolves as OVHcloud refines its IAM surface, and any list reproduced in training material has a non-zero risk of being out of date by the time the learner sits the certification or operates in the field. As of mid-2026 the predefined policies most likely to come up in conversation are `Administrator` (everything, account-wide), `Public Cloud Operator` (read and write on Public Cloud resources, no billing, no project deletion), `Public Cloud Read-only` (read everywhere in Public Cloud, write nowhere), `Billing Read-only` (billing visibility, zero on infrastructure), `Support Operator` (create and follow support tickets), and policies scoped to specific product families (`Dedicated Server Operator`, `Bare Metal Cloud Operator`, and similar). For the typical Northwind-style team, the four that cover 95% of segmentation needs are `Public Cloud Operator` for developers and SREs, `Public Cloud Read-only` for auditors, `Billing Read-only` for finance, and `Administrator` for the one or two cloud admins. The Customer-facing documentation at `docs.ovhcloud.com` carries the description of each predefined policy and the actions it bundles — when in doubt, the answer is "open the policy in the Manager, expand the actions list, and read what it actually allows". Avoid quoting specific action verbs from memory in delivery; defer to the Manager.
 
-- Rollout: four moves — IAM identity, app credential, secret externalization, audit. Project the Step-by-step slide.
-- Top blockers: IAM propagation 30-60s · missing `OS_AUTH_TYPE` line · `fetch-secret.sh` 403 (secret policy not granted) · `config.yaml` edited *before* `ExecStartPre` wired.
-- >50% in retard at 20 min → declare step 12 (S3 secret) optional. PostgreSQL pattern anchored, S3 is repetition.
-- Close: 5-min warning at 25, hard stop at 30. *"Findings stay in your repo. We look at them Day 3."*
-
-**Anti-pattern**: do not pre-validate scoping for the learner. They must open the private window themselves and *see* the absent Delete button.
+**LO traced**: `LO-SEC-K02`, `LO-SEC-A01`.
+**Likely asker**: any learner planning their post-training segmentation, often before the lab even starts. The question is a useful trigger for the slide-6 conversation about the duplicate-then-trim production workflow.
 
 ---
-layout: default
----
 
-# Block 5 — Micro-check (5 min)
+## Q6 — How do action wildcards actually work in custom policies, and what's the right way to author one without typos?
 
-**Posture**: formative, 40 s per question.
+OVHcloud IAM actions follow a colon-separated hierarchy that looks like `service:scope:resource:verb` — for example `publicCloud:operate:instance:create`, `publicCloud:operate:network:list`, `account:billing:invoice:read`. Wildcards work at each level of the hierarchy: `publicCloud:operate:instance:*` covers all instance actions on Public Cloud operate scope; `publicCloud:operate:*` covers all Public Cloud operate actions across all resources; `publicCloud:*` covers every Public Cloud action including read and write; and the unrestricted `*` covers everything OVHcloud-wide. Wildcards are evaluated from the most specific match outward, with deny rules overriding allow rules at any specificity, which means the trimming pattern works: start from a broad allow (predefined policy with `publicCloud:operate:*`), add a specific deny (`publicCloud:operate:project:delete`), and the resulting effective permission is "everything except project deletion". The only safe way to author the action set is the **action picker in the Manager UI** — open the policy editor, click into the action selection, browse the hierarchy, check the verbs. Hand-writing URNs leads to typos that fail silently: a policy with a misspelled action does not error out, it simply does not match any real call, and the user appears to have permission until they try to use it. The audit reflex (slide 10) catches this eventually, but catching it at authoring time is cheaper. For learners who want to dig into the URN syntax, `docs.ovhcloud.com` has the full grammar; for delivery, the picker is the answer.
 
-- **Q1** (IAM vs Keystone, `K01`) and **Q4** (app credential pattern, `K04`/`S03`) are pivotal.
-- 3+ wrong Q1 → plan a 2-min opener at Module 3.1 (IaC hits the same two-gate model).
-- Wrong Q4 → replay S07. *"Lifecycle of a human bleeds into automation."*
-- **Q7** (audit, `S05`/`A02`) and **Q8** (segmentation, `A01`) test attitude — signal whether learner internalized *posture* or just *facts*.
+**LO traced**: `LO-SEC-K02`.
+**Likely asker**: senior learner with AWS IAM JSON-policy background, often interested in scripting policy authoring and wondering if there's a JSON or YAML equivalent for the OVHcloud side. There is — the OVHcloud API exposes policy management programmatically — but the right answer at Associate scope is "the picker first, the API once you have a working policy to scale out".
 
 ---
-layout: default
----
 
-# Block 6 — Wrap-up (5 min)
+## Q7 — What does `--unrestricted` mean on an OpenStack application credential, and when would I actually need it?
 
-**Posture**: warm, conclusive. Day 2 closes here.
+A standard (restricted, default) application credential authorizes its bearer to perform the OpenStack actions allowed by its attached role on its scoped project — and nothing else. An `--unrestricted` application credential adds one specific capability on top: it can be used to create new application credentials. That is the only difference. The reason it matters operationally is that restricted credentials are safe to distribute to consumers (a backup script, a Terraform workspace, a CI pipeline) because the worst-case blast radius if leaked is "an attacker can do what the role allows" — bounded by the role and the expiry. An unrestricted credential, if leaked, lets the attacker mint new credentials at will, and those new credentials can have their own scopes — turning a single leaked secret into a credential foundry. The cases where `--unrestricted` is genuinely needed are narrow: automation systems whose explicit job is to provision credentials for downstream services, typically only in enterprise IAM-automation pipelines. Even there, a better pattern is usually a dedicated IAM identity with the appropriate IAM-level permissions to manage application credentials, rather than a single OpenStack credential carrying both operate and credential-minting powers. The default — restricted — is the right answer 99% of the time, and the trainer-side framing in the lab should be: "leave unrestricted off; if you ever think you need it, the burden of proof is on you to explain why".
 
-- Recap the verbs: distinguish, explain, identify, create, generate, store, audit, recommend, justify.
-- Final anchor: *"Application credentials over personal credentials. No exception. Even alone."*
-- Transition to 3.1: *"Network production-shape. Identity production-shape. But everything by hand. Tomorrow we rebuild it in 10 min from `terraform apply`."*
-
-**Anti-pattern**: do not start Module 3.1 here. End Day 2 on the audit-reflex win.
+**LO traced**: `LO-SEC-K04`, `LO-SEC-S03`.
+**Likely asker**: any learner during the lab when they click through the application credential creation form and see the checkbox. The question is good — they noticed an option — and the trainer's job is to make sure they leave it off and understand why.
 
 ---
-layout: two-cols
----
 
-# FAQ (1/2)
+## Q8 — How long should an application credential live, and how do I rotate one without breaking the consumer that depends on it?
 
-::left::
+The expiry should match the rotation cadence of the consuming system, not an arbitrary calendar interval. 90 days is a reasonable default for backup scripts, observability agents, and CI/CD pipelines if no security policy mandates shorter; tighter (30 days or less) is appropriate for higher-stakes workloads where the audit posture requires fresh credentials; longer than 90 days is rarely defensible because the rotation discipline atrophies. The fundamental rule that the trainer should ancrer in the lab is: never create an application credential with no expiry. An expiry-less credential is operationally indistinguishable from a personal credential — both will outlive their original purpose, both will be forgotten in audit logs, both will surface in the post-mortem of an incident. The rotation pattern that actually works in production is **create-then-swap-then-revoke**, in that order. Create a new application credential with the same role and scope as the old one. Deploy the new `openrc.sh` to the consumer — for a cron job, replace the file on disk; for a Terraform workspace, update the workspace variables; for a CI pipeline, update the secret in the CI's secret store. Validate that the consumer is now using the new credential (typically by checking the OpenStack audit log for calls authenticated by the new credential ID). Only then revoke the old credential. The opposite ordering — revoke-then-create — guarantees a window of broken automation between revocation and the new credential becoming functional, which is precisely the kind of operational incident a rotation is supposed to prevent. The trainer's optional step in the lab (step 13e) is exactly this rotation pattern at small scale; for learners who finish early, walking through it makes the discipline concrete.
 
-<div class="-mt-8">
-
-**"Why two IAM layers — AWS-style complexity?"**
-
-OpenStack ships Keystone (project-scoped, native). OVHcloud wraps the account around it (billing, support, lifecycle, vRack), and that wrapper needs its own identity. Collapsing breaks OpenStack-native compatibility. Frame as clean separation: IAM = corporate AD, Keystone = local groups on a server.
-
-**"IAM allows but my call fails?"**
-
-Gate 2 closed: no Keystone role. One-line diagnostic: `openstack role assignment list --user <u> --project <p> --names`. Empty → grant the role. Highest-recurrence support case in the field.
-
-</div>
-
-::right::
-
-<div class="-mt-8">
-
-**"Policies on users or groups?"**
-
-Always groups. Direct user attachment loses maintainability, auditability, one-click revocation. Test: *"Explain to your security officer in 30s who has admin on prod."* With groups: "everyone in `admins`." Per-user: an investigation.
-
-</div>
+**LO traced**: `LO-SEC-K04`, `LO-SEC-S03`.
+**Likely asker**: any operational-minded learner planning their post-training rotation policy. Also commonly asked by SREs in the room who have been burned by no-expiry credentials before and want to anchor the lesson institutionally.
 
 ---
-layout: two-cols
----
 
-# FAQ (2/2)
+## Q9 — How does Secret Manager handle versioning and rotation, and what's the right pattern for an application that cannot tolerate a single failed fetch?
 
-::left::
+Secret Manager stores each secret as a named entry with one or more **versions**. Writing a new value creates a new version of the secret; previous versions remain accessible until explicitly deleted, which gives the operator a rollback path if a new secret value turns out to be wrong. The consumer typically fetches "the latest version" via the OVHcloud API, which is the simplest and most common pattern — the rotation then becomes a two-step operation: write version N+1 in Secret Manager, then trigger a refresh on the consumer (a service restart, a deployment, a cron-driven refresh, or an in-process secret refresh if the application supports one). For applications that cannot tolerate a failed fetch during the rotation window — typically high-availability runtime services where a single 5-second fetch failure cascades into user-visible outages — the production-grade pattern is **dual-fetch with prefer-N**: at startup or refresh time, the application fetches the current version and the immediately previous version in parallel, holds both in memory, attempts to authenticate with version N, falls back to N-1 if N fails for any reason during the swap window. This adds complexity that is not warranted for most workloads at Associate scope, but it is worth knowing the pattern exists for learners who ask about edge cases. The simpler pattern that covers 95% of cases: rotate during a maintenance window, accept a short restart, monitor the rotation succeeded, move on. Versioning also gives an audit trail of when a secret was rotated and by which identity, which is itself a security-posture improvement over a plain config file.
 
-<div class="-mt-8">
-
-**"`--unrestricted` on an app credential?"**
-
-The credential can mint *other* credentials. Restricted (default) is right 99% of the time. Legitimate case = enterprise IAM-automation, and even there a dedicated IAM identity is usually better. Lab rule: leave it off.
-
-**"App credential expiry — rotation?"**
-
-90 days default. Never *no expiry*. Pattern **create → swap → revoke**, in that order. Reverse = guaranteed broken-automation window.
-
-</div>
-
-::right::
-
-<div class="-mt-8">
-
-**"Digital Starter alone — overkill?"**
-
-No. Future-self forgets which credentials belong where. You won't stay alone forever. Expiries force rotation hygiene no calendar delivers. Digital Starter suffers *most* when skipped, not least.
-
-</div>
+**LO traced**: `LO-SEC-K05`, `LO-SEC-S04`.
+**Likely asker**: persona Corporate with SRE or production-engineering background, often someone who has built rotation flows on top of HashiCorp Vault or AWS Secrets Manager before and is checking how OVHcloud Secret Manager compares. The question is useful because it surfaces the dual-fetch pattern, which is good production hygiene worth mentioning even if it is outside the strict Associate scope.
 
 ---
-layout: default
+
+## Q10 — What is the realistic state of KMS integration on OVHcloud Public Cloud at the Associate scope, and what should I tell a learner who needs to plan for compliance requirements?
+
+The honest answer is calibration: service-managed encryption is in place across the Core surface — Object Storage encryption at rest, Block Storage encryption, Secret Manager encryption — and the customer does not see or handle the keys. Customer-managed-key integration is being rolled out service by service, the list expands over time, and the current set is documented on `docs.ovhcloud.com` rather than memorized. At the Associate scope, the take-home message has three parts: first, every encrypted-at-rest service on Public Cloud Core is actually encrypted at rest, full stop — there is no "encryption off" state to opt into; second, the dominant pattern today is service-managed keys, meaning the audit conversation is "OVHcloud manages the encryption keys and we trust that"; third, customer-managed keys via OVHcloud KMS are available on a growing set of services, and the right conversation to have with a compliance-driven customer is "let's check what services in your scope support customer-managed keys today, because that list will be larger six months from now than it is today". For learners who arrive with a SecNumCloud, HDS, or PCI-DSS requirement on key custody, the honest framing is: at the Associate scope we don't model the full compliance matrix; the conversation is product-team-led, with the customer's compliance officer in the loop, and the technical surface — what KMS supports today, which services integrate today, what HSM-backed options exist on Hosted Private Cloud or Bare Metal for stricter requirements — is the customer-engineering conversation that sits outside the Public Cloud Core scope. Be honest with the room: "I'd rather tell you 'check the docs and ask the product team' than make something up that won't hold up six months later".
+
+**LO traced**: `LO-SEC-K06`.
+**Likely asker**: persona Corporate with regulated-industry background — banking, healthcare, public-sector, defense — who is doing due diligence ahead of a procurement decision. The question is high-stakes for the customer's career and the trainer's credibility; an honest "this is the calibration honest answer, here's where to dig deeper" lands better than a fake authoritative answer.
+
 ---
 
-# Post-session debrief
+## Q11 — How do I give an external auditor read-only access for a one-month engagement, and what's the cleanup procedure when the engagement ends?
 
-- Did S04 (two gates) land? Confused questions persisting into the lab → reframe the slide.
-- Audit checklist actually surfaced findings, or empty notes? Empty → pre-planted findings too subtle.
-- Was `fetch-secret.sh` (step 11) a blocker for >2-3 learners? If yes, `ExecStartPre` deserves its own slide.
-- `A02` (app credential over personal) landed? Next-day test: *"Yesterday's backup — what credential does it use?"*
-- Parking-lot question you couldn't answer cleanly? Add to FAQ before next delivery.
+Create a dedicated IAM user named in a way that signals its temporary nature — for example `acme-auditor-jdupont-202611` where the date encodes the engagement window. Add them to an IAM group `auditors` (create if it does not exist) with the `Public Cloud Read-only` policy attached. Grant them the OpenStack `reader` role on every project they need to audit — this is per-project, so a Northwind-like multi-project setup means multiple role assignments. Enforce MFA on first sign-in (the organization-level MFA enforcement covers this if it is set). Crucially, do not generate any OpenStack application credential in their name and do not allow them to generate one (the `Public Cloud Read-only` policy should not include credential-creation actions — verify this in the Manager). At the end of the engagement, the cleanup procedure is the calendar reminder you set when you created the user: deactivate or delete the user in IAM, which automatically invalidates their access; verify the audit log that no application credentials were created during the engagement (`openstack application credential list --user <auditor>`); verify their group membership has been removed; for full hygiene, run a project-side `openstack role assignment list --user <auditor> --names` and confirm no lingering role assignments — those should disappear when the user is deleted, but it doesn't cost anything to verify. The discipline of "every external identity has a known end date encoded in its name" is a small habit that makes audits trivial. The audit reflex from slide 10 catches stale auditor accounts that were never cleaned up; preventing them at creation is cheaper than catching them in audit.
+
+**LO traced**: `LO-SEC-S01`, `LO-SEC-S02`, `LO-SEC-S05`, `LO-SEC-A01`.
+**Likely asker**: persona Corporate with security or compliance operations responsibilities, often someone who has dealt with external auditor access on AWS and is mapping the equivalent procedure on OVHcloud. The question is also a useful trigger for the slide-11 corporate segmentation conversation — the auditor row of that table is exactly this scenario operationalized.
+
+---
+
+## Q12 — What happens to application credentials and Secret Manager entries when the OpenStack project itself is deleted? Is there a cleanup footgun I should know about?
+
+Yes, and it's a real audit finding pattern worth flagging. Application credentials are **project-scoped** at the Keystone level — they are issued within a project, attached to a role on that project, and they die when the project is deleted. From an audit perspective this is the clean behavior: deleting the project deletes the credentials, no orphan credentials remain in the system. Secret Manager entries, by contrast, live at the **OVHcloud organization level**, not at the project level. They are not bound to any specific Public Cloud project — they are scoped by the IAM policy of the identity that owns them and by access policies attached to each secret individually. This means deleting a Public Cloud project does not delete the secrets associated with it. The secrets persist in Secret Manager, potentially with stale references to deleted resources in their names, descriptions, or values, and potentially with access policies referencing identities that may also have been cleaned up since. This asymmetry is the cleanup footgun: an operator who deletes a stale staging project may not realize they have left behind a handful of secrets that referenced that project's resources. The audit reflex from slide 10 catches it eventually — the "for each secret, who still references it?" pass — but the discipline that prevents it from accumulating is to include "audit Secret Manager for entries referencing this project" in the project teardown checklist. For Northwind specifically, this means that if the staging project is ever rebuilt from scratch (Module 3.1 will rebuild it via Terraform), the secrets in Secret Manager need to be either deleted alongside the project or explicitly migrated to the new project's identities.
+
+**LO traced**: `LO-SEC-K05`, `LO-SEC-S05`.
+**Likely asker**: any operationally-minded learner thinking ahead about project lifecycle management, especially in environments with frequent project teardown-and-rebuild cycles (staging, ephemeral PR environments, demo projects). The question is also a useful entry point for Module 3.1 IaC conversations — Terraform makes project teardown trivial, which makes the secret-orphan problem more frequent if the discipline isn't in place.
+
+---
+
+## Q13 — Persona Digital Starter — I am alone, I have one project, I am the only operator. Why should I bother with IAM groups, application credentials, audit reflexes, and Secret Manager?
+
+Three reasons that compound, none of which are about "best practices for the sake of best practices". First, your future self in six months has already forgotten which credentials are tied to which scripts. If your backup cron uses your personal `openrc.sh`, the day you rotate your OVHcloud account password — because the auto-renewal hit, because you noticed it had leaked into a screenshot you posted, because you suspected a compromise — your backup chain breaks at the next run, silently, and you find out three weeks later when you actually need a backup. An application credential with a 90-day expiry and an explicit name forces you to confront rotation on its own schedule, which is exactly what you want. Second, you will not be alone forever. The day you invite a contractor to help on a project, a freelance developer to ship a feature, an accountant to look at billing, or a future hire to take over operations, the IAM segmentation you've already built saves you hours and protects you from the temptation to "just share the admin password for now". The five-minute investment of creating one group per role today is the difference between a 10-second onboarding in six months and a frantic afternoon of credential cleanup. Third, application credentials with explicit expiries act as a forcing function for rotation hygiene that no calendar reminder will ever replace. A credential with no expiry is a credential you will never rotate; a credential that expires in 90 days is a credential whose rotation will, by definition, happen four times a year — which keeps the rotation procedure muscle-memory and prevents the panic-rotation-everything reflex when something goes wrong. The Digital Starter persona is precisely the operator who suffers most when these disciplines are skipped, because there is no team to compensate for the missing process. The discipline pays for itself within the first incident — and there will be a first incident.
+
+**LO traced**: `LO-SEC-A01`, `LO-SEC-A02`.
+**Likely asker**: persona Digital Starter directly, often phrased as a polite version of "isn't this overkill for me?". Also asked indirectly by smaller-team Corporate operators who recognize their reality is closer to Digital Starter than to the four-persona template of slide 11. The answer is the same: the disciplines exist precisely because solo operators benefit most from them, not despite their solo status.
+
+---
+
+## Cross-module forward references collected from this module
+
+For convenience, the topics the trainer is most likely to be asked about that point **forward** to later modules — useful to anchor a "we'll cover this in" answer without having to re-derive the mapping live.
+
+| Topic raised | Forward reference |
+|---|---|
+| Terraform for `ovh_iam_user`, `ovh_iam_group`, `ovh_iam_policy`, `openstack_identity_application_credential_v3`, `ovh_secret_manager` resources | Module 3.1 — IaC Essentials |
+| Storing the Terraform state in a backend that respects the secret-handling discipline of this module (not plain S3 with no encryption) | Module 3.1 — IaC Essentials |
+| Using application credentials to authenticate Terraform itself against the OpenStack provider, including a dedicated `terraform-ci-cred` per pipeline | Module 3.1 — IaC Essentials |
+| cloud-init pattern for fetching secrets at instance boot via Secret Manager and injecting into systemd environment, replacing the manual `ExecStartPre` of the lab | Module 3.1 — IaC Essentials |
+| IAM audit log retention, long-term storage, and forwarding to a SIEM | Module 3.2 — Operations & Monitoring |
+| Operational monitoring of application credential usage patterns to detect anomalies (credential used from an unexpected source, credential silent for weeks suddenly active) | Module 3.2 — Operations & Monitoring |
+| Cost tracking of IAM, Secret Manager, and KMS usage in the broader Public Cloud cost picture | Module 3.2 — Cost, Quotas & Support |
+| Quotas on IAM users, IAM groups, IAM policies, application credentials, and Secret Manager entries per organization or per project | Module 3.2 — Operations & Quotas |
+| SAML / OIDC federation with an external Identity Provider (Azure AD / Entra ID, Okta, Keycloak) for SSO into OVHcloud IAM | Out of scope Core Associate; Pro tier |
+| Just-in-time access requests, time-bound role elevation, break-glass procedures | Out of scope Core Associate; Pro tier |
+| Customer-managed key integration on specific services beyond the awareness level — selecting a KMS-backed encryption for Object Storage, Block Storage, Secret Manager when the service supports it | Out of scope Core Associate; Pro tier |
+| HSM-backed key custody for SecNumCloud, HDS, PCI-DSS compliance scenarios | Out of scope Public Cloud Core; Hosted Private Cloud / Bare Metal product family + Specialist tier |
+| Web Application Firewall, API gateway IAM, and other Layer-7 identity enforcement in front of the application | Out of scope Public Cloud Core; separate OVHcloud product family |
+| Vault-style secret engines (dynamic database credentials, time-bound short-lived secrets generated on demand) | Out of scope Core Associate; alternative pattern via HashiCorp Vault on Public Cloud, Pro tier |
+| Service mesh identity (mTLS between services via SPIFFE / SPIRE, sidecar-issued certificates) | Out of scope Core Associate; MKS Associate certification scope |
+| Managed Kubernetes service account integration with OVHcloud IAM, Workload Identity patterns | Out of scope Core; MKS Associate certification |
+| Sovereign cloud constraints on IAM data residency, audit log location, key custody jurisdiction | Out of scope Core; Specialist tier |
+| Cross-account IAM patterns (one OVHcloud account managing resources in another, similar to AWS cross-account roles) | Out of scope Core Associate; Pro tier |
