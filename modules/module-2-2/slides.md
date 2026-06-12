@@ -61,34 +61,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 — Sentier battu** · 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 — Theory** · 30 min
-*File Storage · Snapshot vs Backup · Cold Archive*
-
-**Block 3 — Demo** · 15 min
-*Share mount · Snapshot restore · Instance Backup · pg_dump round-trip*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 — Lab** · 30 min
-*Make Northwind's data layer durable*
-
-**Block 5 — Micro-check** · 5 min
-*Formative QCM, 7 questions*
-
-**Block 6 — Wrap-up** · 5 min
-*Recap & transition to Module 2.3*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">File Storage · Snapshot vs Backup · Cold Archive</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">Share mount · Snapshot restore · Instance Backup · pg_dump round-trip</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Make Northwind's data layer durable</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">7 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 2.3</span>
+</div>
 </div>
 
 <!--
@@ -218,7 +220,7 @@ los: ["LO-STO-K04", "LO-STO-K05", "LO-STO-K06"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     STACK[Northwind stack<br/>web + API + DB<br/>volume + bucket]:::stack
@@ -303,9 +305,7 @@ OpenStack <strong>Manila</strong><br/>
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Not NAS-HA.</strong> NAS-HA is a Hosted Private Cloud product. In OVHcloud Public Cloud, the shared filesystem service is called <strong>File Storage</strong> (Manila, NFS v3). Same protocol, different product line.
-</div>
+<OvhWarning title="Not NAS-HA" class="mt-4">NAS-HA is a Hosted Private Cloud product. In OVHcloud Public Cloud, the shared filesystem service is called <strong>File Storage</strong> (Manila, NFS v3). Same protocol, different product line.</OvhWarning>
 
 <div class="mt-3 text-center text-sm" style="color: var(--ovh-gray-700);">
 Legacy analogy : block = SAN LUN &middot; object = CDN origin &middot; file = NAS share &middot; AWS analogy : EBS &middot; S3 &middot; EFS
@@ -367,9 +367,7 @@ Don't reach for File Storage when...
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Multi-attach is the killer feature.</strong> If only one instance owns the data, Block Storage is simpler and faster. If the data is accessed via HTTP, Object Storage is the right tool. File Storage is for the multi-reader-writer case.
-</div>
+<OvhWarning title="Multi-attach is the killer feature" class="mt-4">If only one instance owns the data, Block Storage is simpler and faster. If the data is accessed via HTTP, Object Storage is the right tool. File Storage is for the multi-reader-writer case.</OvhWarning>
 
 <!--
 Trainer notes S03 File Storage decision:
@@ -429,9 +427,7 @@ los: ["LO-STO-K05"]
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>A snapshot is NOT a backup.</strong> Snapshots are the seatbelt (fast operational rollback). Backups are the airbag (disaster recovery on independent storage). The 3-2-1 rule applies : 3 copies, 2 media, 1 off-site &mdash; snapshots alone violate it.
-</div>
+<OvhWarning title="A snapshot is NOT a backup" class="mt-4">Snapshots are the seatbelt (fast operational rollback). Backups are the airbag (disaster recovery on independent storage). The 3-2-1 rule: 3 copies, 2 media, 1 off-site &mdash; snapshots alone violate it.</OvhWarning>
 
 <!--
 Trainer notes S04 Snapshot vs Backup:
@@ -585,9 +581,7 @@ los: ["LO-STO-S07"]
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Instance Backup is system-disk only.</strong> Additional volumes must be backed up independently &mdash; via volume snapshots, application-level dumps to Object Storage, or both. This is THE pitfall of the service.
-</div>
+<OvhWarning title="Instance Backup is system-disk only" class="mt-4">Additional volumes must be backed up independently &mdash; via volume snapshots, application-level dumps to Object Storage, or both. This is THE pitfall of the service.</OvhWarning>
 
 <div class="mt-3 text-center text-sm" style="color: var(--ovh-gray-700);">
 AWS analogy : AWS Backup (closer match than EBS snapshot) &middot; Azure analogy : Azure Backup
@@ -611,16 +605,16 @@ los: ["LO-STO-K06"]
 
 # Cold Archive &mdash; the long tail
 
-<div class="flex justify-center mt-2">
+<div class="flex justify-center mt-6">
 
-```mermaid {scale: 0.6}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 25, 'rankSpacing': 30}}}%%
 flowchart LR
     STD[Standard<br/>immediate access]:::hot
     IA[Infrequent Access<br/>cheaper, occasional]:::warm
     COLD[Cold Archive<br/>cheapest, slow restore]:::cold
-    STD --> IA
-    IA --> COLD
+    STD ----> IA
+    IA ----> COLD
 
     classDef hot fill:#000E9C,stroke:#000E9C,color:#FFFFFF
     classDef warm fill:#DCEAFD,stroke:#000E9C,color:#000E9C
@@ -706,9 +700,7 @@ los: ["LO-STO-A01", "LO-STO-A02", "LO-STO-A03"]
 
 </div>
 
-<div class="ovh-callout mt-4">
-  <strong>Three tiers, three recipes &mdash; same tools.</strong> The DB strategy alone respects 3-2-1 : 3 copies (live volume + S3 dump + Cold Archive), 2 media (block + tape), 1 off-site (Cold Archive in different DCs).
-</div>
+<OvhNotice title="Three tiers, three recipes" class="mt-4">The DB strategy alone respects 3-2-1: 3 copies (live volume + S3 dump + Cold Archive), 2 media (block + tape), 1 off-site (Cold Archive in different DCs).</OvhNotice>
 
 <!--
 Trainer notes S09 Northwind backup strategy:
@@ -769,9 +761,7 @@ los: ["LO-STO-K04", "LO-STO-K05", "LO-STO-K06"]
 
 </div>
 
-<div class="ovh-callout mt-4">
-  <strong>Same primitives, different names.</strong> The snapshot-vs-backup distinction is universal &mdash; and universally misunderstood. AWS Backup is a closer match to Instance Backup than EBS Snapshot, because EBS Snapshot is just the snapshot primitive, not a scheduled service.
-</div>
+<OvhNotice title="Same primitives, different names" class="mt-4">The snapshot-vs-backup distinction is universal &mdash; and universally misunderstood. AWS Backup is a closer match to Instance Backup than EBS Snapshot, because EBS Snapshot is just the snapshot primitive, not a scheduled service.</OvhNotice>
 
 <!--
 Trainer notes S10 Hyperscaler mapping:
@@ -936,7 +926,7 @@ slideId: "Lab — Steps 1/2"
 # Lab &mdash; Step-by-step (1/2)
 ### File Storage + Snapshot &middot; openstack CLI
 
-<div class="text-xs mt-1">
+<div class="text-xs mt-0">
 
 <strong>1.</strong> <code>openstack share create --share-type default nfs 10 --name &lt;initials&gt;-nw-uploads</code><br/>
 &nbsp;&nbsp;<code>openstack share access create &lt;share&gt; ip &lt;api-IP&gt;</code> (and again for <code>&lt;web-IP&gt;</code>)<br/>
@@ -973,7 +963,7 @@ slideId: "Lab — Steps 2/2"
 # Lab &mdash; Step-by-step (2/2)
 ### Instance Backup + pg_dump &middot; Manager + aws-cli
 
-<div class="text-xs mt-2">
+<div class="text-xs mt-0">
 
 <strong>9.</strong> Manager &gt; Public Cloud &gt; Instances &gt; <code>&lt;initials&gt;-nw-api-01</code> &gt; Backup tab &gt; Enable<br/>
 &nbsp;&nbsp;Daily frequency, 7-day retention &middot; confirm next-run timestamp is non-empty<br/>
@@ -990,9 +980,7 @@ slideId: "Lab — Steps 2/2"
 
 </div>
 
-<div class="ovh-callout mt-3 text-xs">
-<strong>Artifact</strong> (do NOT commit secrets) &middot; <code>storage2-notes.txt</code> &middot; share path + snapshot name + dump key + restore COUNT result
-</div>
+<OvhNotice class="mt-4"><strong>Do NOT commit secrets</strong> &mdash; <code>storage2-notes.txt</code> &middot; share path + snapshot name + dump key + restore COUNT result</OvhNotice>
 
 <!--
 Trainer notes Lab Steps 2/2:

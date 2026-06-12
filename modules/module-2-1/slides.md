@@ -60,34 +60,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 — Sentier battu** · 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 — Theory** · 30 min
-*Block · Object · paradigms · OpenStack provenance*
-
-**Block 3 — Demo** · 15 min
-*Volume create / attach / mount / detach + S3 round-trip*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 — Lab** · 30 min
-*Provision Northwind's stateful and shared storage layers*
-
-**Block 5 — Micro-check** · 5 min
-*Formative QCM, 7 questions*
-
-**Block 6 — Wrap-up** · 5 min
-*Recap & transition to Module 2.2*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">Block · Object · paradigms · OpenStack provenance</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">Volume create · attach · mount · detach · S3 round-trip</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Provision Northwind's stateful and shared storage layers</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">7 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 2.2</span>
+</div>
 </div>
 
 <!--
@@ -280,9 +282,7 @@ Workloads : build artifacts, backups, static assets, log archives
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Not interchangeable :</strong> object as a database is painful (no in-place updates). Block to share static assets across N web servers is wasteful (single-attach). Legacy analogy : Block = SAN LUN, Object = CDN origin.
-</div>
+<OvhWarning title="Not interchangeable" class="mt-4">Object as a database is painful (no in-place updates). Block to share static assets across N web servers is wasteful (single-attach). Legacy analogy: Block = SAN LUN, Object = CDN origin.</OvhWarning>
 
 <!--
 Trainer notes S02 Two access patterns:
@@ -307,7 +307,7 @@ los: ["LO-STO-K02"]
 %%{init: {'flowchart': {'nodeSpacing': 25, 'rankSpacing': 25}}}%%
 flowchart LR
     VOL[Block Volume<br/>50 GiB]:::vol
-    VOL -->|attached as /dev/sdb| INST[Instance]:::inst
+    VOL ---->|attached as /dev/sdb| INST[Instance]:::inst
 
     classDef vol fill:#DCEAFD,stroke:#000E9C,color:#000E9C
     classDef inst fill:#000E9C,stroke:#000E9C,color:#FFFFFF
@@ -385,9 +385,7 @@ Top cost / GiB<br/>
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Tier choice is at creation only.</strong> To change tier on an existing volume : create a new volume in the target tier and copy the data over. IOPS numbers indicative &mdash; verify on <code>docs.ovhcloud.com</code>.
-</div>
+<OvhWarning title="Tier choice is at creation only" class="mt-4">To change tier on an existing volume: create a new volume in the target tier and copy the data over. IOPS numbers are indicative &mdash; verify on <code>docs.ovhcloud.com</code>.</OvhWarning>
 
 <div class="mt-3 text-center text-sm" style="color: var(--ovh-gray-700);">
 For Northwind staging PostgreSQL : <code>high-speed</code> is plenty. Production might warrant <code>high-speed-gen2</code>.
@@ -412,7 +410,7 @@ los: ["LO-STO-K02"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.72}
 %%{init: {'flowchart': {'nodeSpacing': 20, 'rankSpacing': 30}}}%%
 flowchart LR
     subgraph REG[GRA region]
@@ -472,7 +470,7 @@ los: ["LO-STO-K03"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 25}}}%%
 flowchart LR
     S3[S3-compatible API]:::api
@@ -559,9 +557,7 @@ Time-limited signed URL granting read (or write) for a defined window.<br/><br/>
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Anti-pattern :</strong> making an entire container public-read when only a handful of objects need public access. Narrow visibility to the objects that need it. Object-level ACL overrides container-level.
-</div>
+<OvhWarning title="Anti-pattern" class="mt-4">Making an entire container public-read when only a handful of objects need public access. Narrow visibility to the objects that need it. Object-level ACL overrides container-level.</OvhWarning>
 
 <div class="mt-3 text-center text-sm" style="color: var(--ovh-gray-700);">
 IAM scoping &middot; which user can use which credentials against which container &middot; covered in Module 2.5.
@@ -637,7 +633,7 @@ los: ["LO-STO-K01"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     Q[What's the data?]:::root
@@ -694,7 +690,7 @@ los: ["LO-STO-S01", "LO-STO-S04"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     WEB[nw-web-01]:::inst
@@ -842,9 +838,7 @@ los: ["LO-STO-S01", "LO-STO-S02", "LO-STO-S04", "LO-STO-S05"]
 
 # Lab &mdash; Provision Northwind's stateful + shared storage
 
-<div class="ovh-callout mt-4">
-You are Northwind's Cloud Ops engineer. The CTO wants the database off the ephemeral local disk and the build artifacts in a shared store. Today you : (1) create a 50 GiB Block volume, attach it to <code>&lt;initials&gt;-nw-db-01</code>, format, mount, persist across reboot, (2) generate S3 credentials, create a container <code>&lt;initials&gt;-nw-artifacts</code>, round-trip a file, (3) expose one file as public-read and verify with <code>curl</code>.
-</div>
+<OvhNotice title="Mission" class="mt-4">You are Northwind's Cloud Ops engineer. The CTO wants the database off the ephemeral local disk and the build artifacts in a shared store. Today you: (1) create a 50 GiB Block volume, attach it to <code>&lt;initials&gt;-nw-db-01</code>, format, mount, persist across reboot; (2) generate S3 credentials, create a container <code>&lt;initials&gt;-nw-artifacts</code>, round-trip a file; (3) expose one file as public-read and verify with <code>curl</code>.</OvhNotice>
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 
@@ -947,11 +941,7 @@ slideId: "Lab — Steps (2/2) Object Storage"
 <strong>16.</strong> Incognito browser or <code>curl</code> :<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<code>https://&lt;initials&gt;-nw-artifacts.s3.gra.io.cloud.ovh.net/public/README.txt</code> &rarr; 200 + content
 </div>
-<div class="mt-4 ovh-callout">
-<strong>Artifact</strong> (do NOT commit)<br/>
-<code>&lt;initials&gt;-northwind-staging/storage-notes.txt</code><br/>
-volume UUID + container name + public URL + md5 round-trip
-</div>
+<OvhNotice class="mt-4"><strong>Do NOT commit</strong> &mdash; <code>&lt;initials&gt;-northwind-staging/storage-notes.txt</code><br/>volume UUID + container name + public URL + md5 round-trip</OvhNotice>
 </div>
 <!--
 Trainer notes Lab Steps 2/2 Object:

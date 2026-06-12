@@ -59,34 +59,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 -- Sentier battu** &middot; 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 -- Theory** &middot; 30 min
-*Ext-Net vs private &middot; Neutron objects &middot; Security Groups &middot; Floating IP*
-
-**Block 3 -- Demo** &middot; 15 min
-*Private network &middot; dual-NIC &middot; SG composition &middot; Floating IP*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 -- Lab** &middot; 30 min
-*Split Northwind into a public and a private tier*
-
-**Block 5 -- Micro-check** &middot; 5 min
-*Formative QCM, 7 questions*
-
-**Block 6 -- Wrap-up** &middot; 5 min
-*Recap & transition to Module 2.4*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">Ext-Net vs private · Neutron objects · Security Groups · Floating IP</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">Private network · dual-NIC · SG composition · Floating IP</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Split Northwind into a public and a private tier</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">7 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 2.4</span>
+</div>
 </div>
 
 <!--
@@ -219,7 +221,7 @@ los: ["LO-NET-K01"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     NET[Internet]:::net
@@ -294,9 +296,7 @@ los: ["LO-NET-K01"]
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>An instance attaches to one, the other, or both.</strong> Today's topology is <strong>dual-NIC</strong> : Ext-Net for ingress + outbound updates, private network for inter-tier traffic. Private-only (no public NIC) becomes practical only after Module 2.4 introduces the Gateway.
-</div>
+<OvhWarning title="An instance attaches to one, the other, or both" class="mt-4">Today's topology is <strong>dual-NIC</strong>: Ext-Net for ingress + outbound updates, private network for inter-tier traffic. Private-only becomes practical only after Module 2.4 introduces the Gateway.</OvhWarning>
 
 <!--
 Trainer notes S02 Ext-Net vs private:
@@ -391,7 +391,7 @@ los: ["LO-NET-K02"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.6}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     NET[network<br/>nw-private]:::net
@@ -465,9 +465,7 @@ openstack server add network <instance> nw-private
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>DHCP must be enabled at subnet creation.</strong> Adding it later is not a clean operation : the supported path is to delete and recreate the subnet, which requires detaching every instance first. Get it right at creation.
-</div>
+<OvhWarning title="DHCP must be enabled at subnet creation" class="mt-4">Adding it later is not a clean operation: the supported path is to delete and recreate the subnet, which requires detaching every instance first. Get it right at creation.</OvhWarning>
 
 <!--
 Trainer notes S05 Create a private network:
@@ -564,13 +562,9 @@ los: ["LO-NET-K02", "LO-NET-S03"]
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm">
-<strong>Applied per port</strong> (not strictly per instance). Multiple SGs on the same port &rarr; rules are <strong>additive</strong> (OR logic, never subtractive). A port with <strong>zero</strong> SG attached usually blocks everything (verify before removing the last SG).
-</div>
+<OvhNotice title="Applied per port" class="mt-4">(Not strictly per instance.) Multiple SGs on the same port &rarr; rules are <strong>additive</strong> (OR logic, never subtractive). A port with <strong>zero</strong> SG attached usually blocks everything — verify before removing the last SG.</OvhNotice>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>If you can't reach the service, check the Security Group first.</strong> AWS SG has identical semantics. Azure NSG is similar but priority-based. AWS Network ACL is <strong>stateless</strong> &mdash; do not confuse it with SG.
-</div>
+<OvhWarning title="If you can't reach the service, check the Security Group first" class="mt-4">AWS SG has identical semantics. Azure NSG is similar but priority-based. AWS Network ACL is <strong>stateless</strong> &mdash; do not confuse it with SG.</OvhWarning>
 
 <!--
 Trainer notes S07 Security Group default-deny:
@@ -593,7 +587,7 @@ los: ["LO-NET-S03"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.8}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     LAPTOP[Trainer IP<br/>laptop]:::ext
@@ -615,9 +609,7 @@ flowchart LR
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm">
-<strong>Source = another SG, not a CIDR.</strong> <code>--remote-group api-sg</code> &mdash; the API SG accepts <code>5432/tcp</code> only from members of <code>api-sg</code>. Robust : IPs of instances can change, the SG membership is stable. AWS uses the same idiom.
-</div>
+<OvhNotice title="Source = another SG, not a CIDR" class="mt-4"><code>--remote-group api-sg</code> &mdash; the API SG accepts <code>5432/tcp</code> only from members of <code>api-sg</code>. Robust: IPs of instances can change, the SG membership is stable. AWS uses the same idiom.</OvhNotice>
 
 <!--
 Trainer notes S08 SG composition tier model:
@@ -652,7 +644,7 @@ flowchart LR
 
 </div>
 
-<div class="text-sm mt-4">
+<div class="text-sm mt-1">
 
 <table style="width:100%; border-collapse: collapse;">
 <thead>
@@ -683,9 +675,7 @@ flowchart LR
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>For Public Cloud workloads, use Floating IP.</strong> Additional IP enters the conversation only for cross-product setups (Bare Metal, VPS). Same word "IP", two products.
-</div>
+<OvhWarning title="For Public Cloud workloads, use Floating IP" class="mt-4">Additional IP enters the conversation only for cross-product setups (Bare Metal, VPS). Same word &ldquo;IP&rdquo;, two products.</OvhWarning>
 
 <!--
 Trainer notes S09 Floating IP:
@@ -865,9 +855,7 @@ los: ["LO-NET-S01", "LO-NET-S02", "LO-NET-S03", "LO-NET-S04"]
 
 # Lab &mdash; Split Northwind into a public and a private tier
 
-<div class="ovh-callout mt-4">
-You are Northwind's Cloud Ops engineer. The CTO walks in : <em>"Why is the database on a public IP? I want web in front, API and DB behind, and a Floating IP I can move when we replace a frontend."</em> Today you : (1) provision a private network and a DHCP subnet, (2) dual-attach API + DB, verify L2 reachability, (3) write three tiered Security Groups (web / api / db) with least-privilege ingress, (4) attach a Floating IP to the web frontend.
-</div>
+<OvhNotice title="Mission" class="mt-4">You are Northwind's Cloud Ops engineer. The CTO walks in: <em>&ldquo;Why is the database on a public IP? I want web in front, API and DB behind, and a Floating IP I can move when we replace a frontend.&rdquo;</em> Today you: (1) provision a private network and a DHCP subnet; (2) dual-attach API + DB, verify L2 reachability; (3) write three tiered Security Groups (web / api / db) with least-privilege ingress; (4) attach a Floating IP to the web frontend.</OvhNotice>
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 
@@ -889,7 +877,7 @@ Private ping API &harr; DB succeeds &middot; <code>curl</code> web &rarr; API:80
 
 </div>
 
-<div class="mt-6 text-center" style="color: var(--ovh-masterbrand-blue); font-weight: 600;">
+<div class="mt-2 text-center" style="color: var(--ovh-masterbrand-blue); font-weight: 600;">
   Network : <code>&lt;initials&gt;-nw-private</code> &middot; CIDR : <code>10.50.0.0/24</code> &middot; Time : 30 min
 </div>
 
@@ -1004,9 +992,7 @@ slideId: "Lab -- Steps 3/3"
 
 </div>
 
-<div class="ovh-callout mt-3 text-xs">
-<strong>Artifact</strong> &middot; <code>network-state.txt</code> &middot; outputs of <code>openstack network list</code>, <code>subnet list</code>, <code>security group list</code>, <code>floating ip list</code>
-</div>
+<OvhNotice title="Artifact" class="mt-3"><code>network-state.txt</code> &middot; outputs of <code>openstack network list</code>, <code>subnet list</code>, <code>security group list</code>, <code>floating ip list</code></OvhNotice>
 
 <!--
 Trainer notes Lab Steps 3/3:
@@ -1286,7 +1272,7 @@ Module 2.4 closes all three : <strong>Gateway</strong> retires the unused public
 </div>
 </div>
 
-<div class="mt-6 text-center text-sm" style="color: var(--ovh-gray-700);">
+<div class="mt-2 text-center text-sm" style="color: var(--ovh-gray-700);">
 Module 7 / 11 &middot; Network domain &mdash; Part 1 of 2 &middot; Part 2 starts next
 </div>
 

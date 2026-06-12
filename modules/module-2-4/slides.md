@@ -64,34 +64,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 -- Sentier battu** &middot; 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 -- Theory** &middot; 30 min
-*vRack &middot; Gateway &middot; Floating vs Additional IP &middot; Load Balancer &middot; Anti-DDoS*
-
-**Block 3 -- Demo** &middot; 15 min
-*Gateway deploy &middot; LB with 2 backends &middot; HTTPS termination*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 -- Lab** &middot; 30 min
-*Retire public IPs via Gateway, deploy LB with HTTPS*
-
-**Block 5 -- Micro-check** &middot; 5 min
-*Formative QCM, 8 questions*
-
-**Block 6 -- Wrap-up** &middot; 5 min
-*Recap & transition to Module 2.5 (Identity & Security)*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">vRack · Gateway · Floating vs Additional IP · Load Balancer · Anti-DDoS</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">Gateway deploy · LB with 2 backends · HTTPS termination</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Retire public IPs via Gateway, deploy LB with HTTPS</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">8 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 2.5</span>
+</div>
 </div>
 
 <!--
@@ -223,7 +225,7 @@ los: ["LO-NET-A01"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     NET[Internet]:::net
@@ -301,9 +303,7 @@ los: ["LO-NET-K03"]
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4 text-sm">
-  <strong>Not an AWS Direct Connect / Transit Gateway analog.</strong> Those are Layer-3 routed services. vRack is closer to a dark-fibre L2 trunk with VLAN trunking on top. No exact hyperscaler equivalent.
-</div>
+<OvhWarning title="Not an AWS Direct Connect / Transit Gateway analog" class="mt-4">Those are Layer-3 routed services. vRack is closer to a dark-fibre L2 trunk with VLAN trunking on top. No exact hyperscaler equivalent.</OvhWarning>
 
 <!--
 Trainer notes S02 vRack overview:
@@ -324,7 +324,7 @@ los: ["LO-NET-K03", "LO-NET-S07"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     VR[vRack underlay<br/>VLAN 42]:::vrack
@@ -332,9 +332,9 @@ flowchart LR
     BM[Bare Metal server<br/>colocation]:::bm
     HPC[Hosted Private Cloud]:::hpc
 
-    PCI -- VLAN 42 --> VR
-    BM -- VLAN 42 --> VR
-    HPC -- VLAN 42 --> VR
+    PCI -- VLAN 42 ----> VR
+    BM -- VLAN 42 ----> VR
+    HPC -- VLAN 42 ----> VR
 
     classDef vrack fill:#000E9C,stroke:#000E9C,color:#FFFFFF
     classDef pci fill:#DCEAFD,stroke:#000E9C,color:#000E9C
@@ -378,7 +378,7 @@ los: ["LO-NET-K05"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     NET[Internet]:::net
@@ -387,11 +387,11 @@ flowchart LR
     API[nw-api-01<br/>10.50.0.20]:::tier
     DB[nw-db-01<br/>10.50.0.30]:::tier
 
-    PRIV --> API
-    PRIV --> DB
-    API -- apt update --> GW
-    DB -- apt update --> GW
-    GW -- SNAT --> NET
+    PRIV ---> API
+    PRIV ---> DB
+    API -- apt update ---> GW
+    DB -- apt update ---> GW
+    GW -- SNAT ---> NET
     NET -. no inbound .-x GW
 
     classDef net fill:#000E9C,stroke:#000E9C,color:#FFFFFF
@@ -459,9 +459,7 @@ los: ["LO-NET-K05"]
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
-  <strong>Cross-reference :</strong> AWS NAT Gateway has identical positioning &mdash; managed SNAT, per-hour billing, no HA to configure. The mental model translates 1:1 for ex-AWS profiles.
-</div>
+<OvhNotice title="AWS NAT Gateway cross-reference" class="mt-4">AWS NAT Gateway has identical positioning &mdash; managed SNAT, per-hour billing, no HA to configure. The mental model translates 1:1 for ex-AWS profiles.</OvhNotice>
 
 <!--
 Trainer notes S05 Gateway sizing and HA:
@@ -506,9 +504,7 @@ los: ["LO-NET-K04"]
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4 text-sm">
-  <strong>On Public Cloud, default to Floating IP.</strong> Additional IP is the cross-product story, rooted in the Bare Metal heritage. AWS Elastic IP = Floating IP. AWS has no equivalent of Additional IP.
-</div>
+<OvhWarning title="On Public Cloud, default to Floating IP" class="mt-4">Additional IP is the cross-product story, rooted in the Bare Metal heritage. AWS Elastic IP = Floating IP. AWS has no equivalent of Additional IP.</OvhWarning>
 
 <!--
 Trainer notes S06 Floating IP vs Additional IP:
@@ -529,7 +525,7 @@ los: ["LO-NET-K06"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     NET[Internet]:::net
@@ -539,11 +535,11 @@ flowchart LR
     W1[nw-web-01<br/>10.50.0.10]:::tier
     W2[nw-web-02<br/>10.50.0.11]:::tier
 
-    NET --> VIP
-    VIP --> LB
-    LB --> P
-    P --> W1
-    P --> W2
+    NET ---> VIP
+    VIP ---> LB
+    LB ---> P
+    P ---> W1
+    P ---> W2
 
     classDef net fill:#000E9C,stroke:#000E9C,color:#FFFFFF
     classDef vip fill:#0050D7,stroke:#000E9C,color:#FFFFFF
@@ -720,7 +716,7 @@ los: ["LO-NET-S06"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     C[Client]:::client
@@ -728,9 +724,9 @@ flowchart LR
     W1[nw-web-01<br/>HTTP 80]:::tier
     W2[nw-web-02<br/>HTTP 80]:::tier
 
-    C -- HTTPS --> LB
-    LB -- HTTP, private --> W1
-    LB -- HTTP, private --> W2
+    C -- HTTPS ----> LB
+    LB -- HTTP, private ----> W1
+    LB -- HTTP, private ----> W2
 
     classDef client fill:#000E9C,stroke:#000E9C,color:#FFFFFF
     classDef lb fill:#0050D7,stroke:#000E9C,color:#FFFFFF
@@ -795,9 +791,7 @@ los: ["LO-NET-K07"]
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
-  <strong>Operational model :</strong> upstream scrubbing, no configuration to do. Compare to AWS Shield Standard (free) + Advanced (paid) &mdash; OVHcloud includes high-grade protection in the free baseline.
-</div>
+<OvhNotice title="Operational model" class="mt-4">Upstream scrubbing, no configuration to do. Compare to AWS Shield Standard (free) + Advanced (paid) &mdash; OVHcloud includes high-grade protection in the free baseline.</OvhNotice>
 
 <!--
 Trainer notes S11 Anti-DDoS scope:
@@ -977,9 +971,7 @@ los: ["LO-NET-K05", "LO-NET-S05", "LO-NET-S06"]
 
 # Lab &mdash; Production-shape Northwind topology
 
-<div class="ovh-callout mt-4">
-You are Northwind's Cloud Ops engineer. The CTO walks back in : <em>"The DB and API still have public IPs we don't need. The web tier is a single instance behind a Floating IP. Give me a Load Balancer with HTTPS and no public IP on the data tier."</em> Today you : (1) deploy a Gateway and retire the Ext-Net NIC from API + DB, (2) clone the web instance, (3) deploy a Load Balancer with two backends and HTTP round-robin, (4) add HTTPS with a managed Let's Encrypt certificate.
-</div>
+<OvhNotice title="Mission" class="mt-4">You are Northwind's Cloud Ops engineer. The CTO walks back in: <em>&ldquo;The DB and API still have public IPs we don't need. The web tier is a single instance behind a Floating IP. Give me a Load Balancer with HTTPS and no public IP on the data tier.&rdquo;</em> Today you: (1) deploy a Gateway and retire the Ext-Net NIC from API + DB; (2) clone the web instance; (3) deploy a Load Balancer with two backends and HTTP round-robin; (4) add HTTPS with a managed Let's Encrypt certificate.</OvhNotice>
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 
@@ -1065,7 +1057,7 @@ slideId: "Lab -- Steps 2/3"
 # Lab &mdash; Step-by-step (2/3)
 ### Clone web + deploy LB &middot; Manager UI
 
-<div class="text-xs mt-1">
+<div class="text-xs mt-0">
 
 <strong>7.</strong> On <code>nw-web-01</code>, inject hostname in nginx welcome :<br/>
 &nbsp;&nbsp;<code>echo "served by $(hostname)" | sudo tee /var/www/html/index.nginx-debian.html</code><br/>

@@ -59,34 +59,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 — Sentier battu** · 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 — Theory** · 30 min
-*Security Groups · cloud-init · snapshots · Rescue · console*
-
-**Block 3 — Demo** · 15 min
-*SG tightening + snapshot + Rescue + console read*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 — Lab** · 30 min
-*Bring Northwind staging to production-grade, three tiers*
-
-**Block 5 — Micro-check** · 5 min
-*Formative QCM, 7 questions*
-
-**Block 6 — Wrap-up** · 5 min
-*Recap & transition to Module 2.1*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">Security Groups · cloud-init · snapshots · Rescue · console</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">SG tightening · snapshot · Rescue · console read</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Bring Northwind staging to production-grade, three tiers</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">7 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 2.1</span>
+</div>
 </div>
 
 <!--
@@ -311,9 +313,7 @@ los: ["LO-CMP-S05"]
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>ALLOW-only model :</strong> there are no DENY rules. The default is deny; rules express exceptions. The engine evaluates the union of allows; order does not matter.
-</div>
+<OvhWarning title="ALLOW-only model" class="mt-4">There are no DENY rules. The default is deny; rules express exceptions. The engine evaluates the union of allows; order does not matter.</OvhWarning>
 
 <!--
 Trainer notes S03 SG rule anatomy:
@@ -427,9 +427,7 @@ Drop static files cleanly · escape hatch for arbitrary shell, used sparingly.
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>YAML traps :</strong> indentation is <em>spaces</em> (two per level), never tabs. CRLF line endings on Windows silently break the parser. Logs after first boot : <code>/var/log/cloud-init-output.log</code>.
-</div>
+<OvhWarning title="YAML traps" class="mt-4">Indentation is <em>spaces</em> (two per level), never tabs. CRLF line endings on Windows silently break the parser. Logs after first boot: <code>/var/log/cloud-init-output.log</code>.</OvhWarning>
 
 <!--
 Trainer notes S05 Cloud-init in practice:
@@ -479,9 +477,7 @@ Not in-place. You deploy a <strong>new instance</strong> from the snapshot, then
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Billing :</strong> snapshots are stored as private images, billed as Object Storage per GB-month. A few cents per snapshot of a <code>d2-2</code>. <strong>OVHcloud deletes nothing :</strong> retention is your responsibility.
-</div>
+<OvhWarning title="Billing" class="mt-4">Snapshots are stored as private images, billed as Object Storage per GB-month. A few cents per snapshot of a <code>d2-2</code>. OVHcloud deletes nothing: retention is your responsibility.</OvhWarning>
 
 <!--
 Trainer notes S06 Snapshots:
@@ -586,9 +582,7 @@ Kernel messages · systemd units · cloud-init output · network bring-up · ssh
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Limits :</strong> post-boot in-process issues do not appear (app crashed 20 min after boot → that's journalctl, needs SSH). Log is truncated to the last N kilobytes.
-</div>
+<OvhWarning title="Limits" class="mt-4">Post-boot in-process issues do not appear (app crashed 20 min after boot → that's journalctl, needs SSH). Log is truncated to the last N kilobytes.</OvhWarning>
 
 <!--
 Trainer notes S08 Console log:
@@ -685,9 +679,7 @@ los: ["LO-CMP-A02"]
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>The Core Associate operator does the infrastructure layer.</strong> The OS hardening is the next layer up : today's setup is the necessary precondition for it.
-</div>
+<OvhWarning title="Core Associate scope" class="mt-4">The Core Associate operator does the infrastructure layer. The OS hardening is the next layer up: today's setup is the necessary precondition for it.</OvhWarning>
 
 <!--
 Trainer notes S10 Hardening reflexes:
@@ -803,9 +795,7 @@ los: ["LO-CMP-S05", "LO-CMP-S06", "LO-CMP-S07", "LO-CMP-S09"]
 
 # Lab — Bring Northwind staging to production-grade
 
-<div class="ovh-callout mt-4">
-You are Northwind's Cloud Ops engineer. The CTO has asked for the staging stack to be production-grade <em>and</em> for the two missing tiers. Today you : (1) tighten SSH on <code>&lt;initials&gt;-nw-web-01</code> via a new Security Group, (2) snapshot it as your baseline, (3) deploy <code>nw-api-01</code> and <code>nw-db-01</code> with cloud-init, (4) read the console log of one of them to find the cloud-init success marker.
-</div>
+<OvhNotice title="Mission" class="mt-4">You are Northwind's Cloud Ops engineer. The CTO has asked for the staging stack to be production-grade <em>and</em> for the two missing tiers. Today you: (1) tighten SSH on <code>&lt;initials&gt;-nw-web-01</code> via a new Security Group, (2) snapshot it as your baseline, (3) deploy <code>nw-api-01</code> and <code>nw-db-01</code> with cloud-init, (4) read the console log of one of them to find the cloud-init success marker.</OvhNotice>
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 
@@ -910,9 +900,7 @@ slideId: "Lab — Steps (2/2) cloud-init deploy"
 
 </div>
 
-<div class="ovh-callout mt-4 text-xs">
-<strong>Artifact</strong> (do NOT commit) — <code>&lt;initials&gt;-northwind-staging/hardening-notes.txt</code> · 4 resource names + success marker line
-</div>
+<OvhNotice title="Artifact" class="mt-4">Do NOT commit — <code>&lt;initials&gt;-northwind-staging/hardening-notes.txt</code> · 4 resource names + success marker line</OvhNotice>
 
 <!--
 Trainer notes Lab Steps 2/2:

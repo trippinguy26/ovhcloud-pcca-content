@@ -62,34 +62,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 — Sentier battu** · 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 — Theory** · 30 min
-*Instances, flavors, images, SSH, channels*
-
-**Block 3 — Demo** · 15 min
-*End-to-end deploy via OpenStack CLI*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 — Lab** · 30 min
-*Deploy Northwind's web frontend via the Manager*
-
-**Block 5 — Micro-check** · 5 min
-*Formative QCM, 7 questions*
-
-**Block 6 — Wrap-up** · 5 min
-*Recap & transition to Module 1.4*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">Instances · flavors · images · SSH · channels</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">End-to-end deploy via OpenStack CLI</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Deploy Northwind's web frontend via the Manager</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">7 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 1.4</span>
+</div>
 </div>
 
 <!--
@@ -210,9 +212,7 @@ You <strong>order</strong> a VM :<br/>
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-6">
-  <strong>Cultural shift :</strong> in public IaaS, custom per-instance sizing does not exist. You pick from a catalog.
-</div>
+<OvhWarning title="Cultural shift" class="mt-6">In public IaaS, custom per-instance sizing does not exist. You pick from a catalog.</OvhWarning>
 
 <div class="mt-4 text-center text-sm" style="color: var(--ovh-gray-700);">
   Hyperscaler cross-reference : AWS calls this an <em>instance type</em>, Azure calls it a <em>VM size</em>, OVHcloud calls it a <em>flavor</em>.
@@ -317,9 +317,7 @@ los: ["LO-CMP-K02"]
 
 </div>
 
-<div class="ovh-callout mt-4">
-  <strong>Selection rule :</strong> pick by I/O profile and CPU/RAM ratio, not by price.
-</div>
+<OvhNotice title="Selection rule" class="mt-4">Pick by I/O profile and CPU/RAM ratio, not by price.</OvhNotice>
 
 <!--
 Trainer notes S03 Flavor families:
@@ -411,9 +409,7 @@ Use for : databases, app data, user uploads.
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Reflex to install :</strong> OS on local · application data on a Block Storage volume. <em>Always.</em>
-</div>
+<OvhWarning title="Reflex to install" class="mt-4">OS on local · application data on a Block Storage volume. <em>Always.</em></OvhWarning>
 
 <div class="mt-4 text-center text-sm" style="color: var(--ovh-gray-700);">
   Legacy analogy : local disk = scratch SSD soldered to the motherboard · volume = SAN LUN that survives the server.
@@ -539,9 +535,7 @@ OVHcloud Linux instances have no root password by default. There is nothing to g
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Private key = secret.</strong> Never commits to Git, never uploaded to a shared drive, never copied between teams. Each engineer has their own pair.
-</div>
+<OvhWarning title="Private key = secret" class="mt-4">Never commits to Git, never uploaded to a shared drive, never copied between teams. Each engineer has their own pair.</OvhWarning>
 
 <!--
 Trainer notes S07 SSH key authentication:
@@ -600,9 +594,7 @@ Full module dedicated : 3.1.
 
 </div>
 
-<div class="ovh-callout mt-6">
-  <strong>Manager = CLI = Terraform = API.</strong> All three channels call the same OpenStack Nova API. A resource created in one appears identically in all the others.
-</div>
+<OvhNotice title="Manager = CLI = Terraform = API" class="mt-6">All three channels call the same OpenStack Nova API. A resource created in one appears identically in all the others.</OvhNotice>
 
 <div class="mt-4 text-center text-sm" style="color: var(--ovh-masterbrand-blue); font-weight: 600;">
   Rule of thumb : one-shot → Manager · scripted ops → CLI · reproducible / team → Terraform
@@ -701,24 +693,26 @@ los: ["LO-CMP-S01"]
 
 # The Northwind staging stack — today's first host
 
-<div class="flex justify-center mt-4">
+<div class="flex justify-center mt-6">
 
 ```mermaid {scale: 0.65}
 %%{init: {'flowchart': {'nodeSpacing': 25, 'rankSpacing': 35}}}%%
-flowchart TB
+flowchart LR
     WEB[nwa-web-staging-01<br/>web frontend · Ubuntu 24.04 · d2-2]:::today
     API[nwa-api-staging-01<br/>API backend · Module 1.4]:::later
     DB[nwa-pgsql-staging-01<br/>PostgreSQL · Module 1.4]:::later
-    WEB --> API
-    API --> DB
+    WEB e1@--> API
+    API e2@--> DB
 
+    e1@{ animation: fast }
+    e2@{ animation: fast }
     classDef today fill:#000E9C,stroke:#000E9C,color:#FFFFFF
-    classDef later fill:#FFFFFF,stroke:#4D4D4D,color:#4D4D4D,stroke-dasharray:4 3
+    classDef later fill:#FFFFFF,stroke:#4D4D4D,color:#4D4D4D,stroke-dasharray:4 3    
 ```
 
 </div>
 
-<div class="grid grid-cols-2 gap-4 mt-6 text-sm">
+<div class="grid grid-cols-2 gap-4 mt-4 text-sm">
 
 <div class="ovh-callout" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
 <strong style="color: var(--ovh-masterbrand-blue);">Today's deliverable</strong><br/>
@@ -733,9 +727,7 @@ Region GRA · Image Ubuntu 24.04 LTS · Flavor <code>d2-2</code> · Default Secu
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Deliberately minimal :</strong> no cloud-init, no SG hardening, no snapshot. All of that is Module 1.4. Today we prove we know how to deploy and connect.
-</div>
+<OvhWarning title="Deliberately minimal" class="mt-2">No cloud-init, no SG hardening, no snapshot. All of that is Module 1.4. Today we prove we know how to deploy and connect.</OvhWarning>
 
 <!--
 Trainer notes S10 Northwind staging stack:
@@ -852,9 +844,7 @@ los: ["LO-CMP-S01", "LO-CMP-S04"]
 
 # Lab — Deploy the Northwind web frontend
 
-<div class="ovh-callout mt-4">
-You are Northwind's Cloud Ops engineer. The CTO has asked the staging stack to come up. Today you deliver the <strong>web frontend host</strong> : one Ubuntu 24.04 LTS instance in your <code>&lt;initials&gt;-northwind-staging</code> project, region GRA, flavor <code>d2-2</code>, with your SSH key. Prove it is reachable by SSHing in and running three sanity commands.
-</div>
+<OvhNotice title="Mission" class="mt-4">You are Northwind's Cloud Ops engineer. The CTO has asked the staging stack to come up. Today you deliver the <strong>web frontend host</strong>: one Ubuntu 24.04 LTS instance in your <code>&lt;initials&gt;-northwind-staging</code> project, region GRA, flavor <code>d2-2</code>, with your SSH key. Prove it is reachable by SSHing in and running three sanity commands.</OvhNotice>
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 
