@@ -112,6 +112,15 @@
       "order": 3,
       "duration": "1h",
       "status": "published"
+    },
+    {
+      "id": "3.4",
+      "slug": "module-3-4",
+      "title": "Final Exam — OVHcloud Public Cloud Core Associate",
+      "day": 3,
+      "order": 4,
+      "duration": "1h30",
+      "status": "published"
     }
   ]
 }
