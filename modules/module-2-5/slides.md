@@ -67,34 +67,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 -- Sentier battu** &middot; 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 -- Theory** &middot; 30 min
-*Two-layer IAM &middot; Policy structure &middot; Roles &middot; App credentials &middot; Secret Manager &middot; KMS &middot; Audit reflex*
-
-**Block 3 -- Demo** &middot; 15 min
-*IAM user + group + policy &middot; Application credential &middot; Secret Manager &middot; Five-catalog audit*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 -- Lab** &middot; 30 min
-*Separate identities, scope credentials, externalize secrets, audit*
-
-**Block 5 -- Micro-check** &middot; 5 min
-*Formative QCM, 8 questions*
-
-**Block 6 -- Wrap-up** &middot; 5 min
-*Recap & transition to Module 3.1 (IaC Essentials)*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">Two-layer IAM · Policy structure · Roles · App credentials · Secret Manager · KMS · Audit reflex</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">IAM user + group + policy · Application credential · Secret Manager · Five-catalog audit</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Separate identities, scope credentials, externalize secrets, audit</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">8 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 3.1</span>
+</div>
 </div>
 
 <!--
@@ -253,9 +255,7 @@ los: ["LO-SEC-A01"]
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
-<strong style="color: var(--ovh-masterbrand-blue);">Module 2.5 overlays production-shape identity</strong>&nbsp;: <strong>IAM scoped per role</strong> &middot; <strong>application credentials</strong> for automation &middot; <strong>Secret Manager</strong> for secrets &middot; <strong>audit reflex</strong> across five catalogs.
-</div>
+<OvhNotice title="Module 2.5 overlays production-shape identity" class="mt-4"><strong>IAM scoped per role</strong> &middot; <strong>application credentials</strong> for automation &middot; <strong>Secret Manager</strong> for secrets &middot; <strong>audit reflex</strong> across five catalogs.</OvhNotice>
 
 <!--
 Trainer notes S01 Where we left off:
@@ -272,11 +272,11 @@ slideId: "S02 -- Two identity layers"
 los: ["LO-SEC-K01"]
 ---
 
-# Two identity layers coexist &mdash; both are always present
+# Two identity layers coexist &mdash; both always present
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.75}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart TB
     USER[User]:::user
@@ -385,11 +385,11 @@ slideId: "S04 -- Two gates in sequence"
 los: ["LO-SEC-K01"]
 ---
 
-# Every Public Cloud action passes two gates &mdash; in sequence
+# Every Public Cloud action passes two gates
 
 <div class="flex justify-center mt-1">
 
-```mermaid {scale: 0.4}
+```mermaid {scale: 0.55}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 35}}}%%
 flowchart LR
     U[User action<br/>create instance nw-api-01]:::user
@@ -426,9 +426,7 @@ At the OpenStack API edge : does the caller have a role on this project permitti
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
-<strong style="color: var(--ovh-masterbrand-blue);">Reading the failure mode</strong>&nbsp;: <em>"IAM allows but the call fails"</em> = Gate 2 closed (no Keystone role). <em>"User cannot sign in at all"</em> = Gate 1 closed (no IAM access).
-</div>
+<OvhNotice title="Reading the failure mode" class="mt-4"><em>"IAM allows but the call fails"</em> = Gate 2 closed (no Keystone role). <em>"User cannot sign in at all"</em> = Gate 1 closed (no IAM access).</OvhNotice>
 
 <!--
 Trainer notes S04 Two gates in sequence:
@@ -492,9 +490,7 @@ los: ["LO-SEC-K02"]
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4 text-sm">
-  <strong>Rules combine with deny overrides allow.</strong> Same as AWS IAM, same as POSIX file ACLs. Useful for guardrails (deny project deletion on top of an allow-everything-else policy).
-</div>
+<OvhWarning title="Rules combine: deny overrides allow" class="mt-4">Same as AWS IAM, same as POSIX file ACLs. Useful for guardrails (deny project deletion on top of an allow-everything-else policy).</OvhWarning>
 
 <!--
 Trainer notes S05 IAM policy structure:
@@ -613,9 +609,7 @@ los: ["LO-SEC-K04", "LO-SEC-A02"]
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4 text-sm">
-  <strong>The reflex <code>A02</code> : any non-interactive workload uses an application credential.</strong> No exceptions. Cron jobs, Terraform, CI/CD, observability agents, backup scripts.
-</div>
+<OvhWarning title="Reflex A02" class="mt-4">Any non-interactive workload uses an application credential. No exceptions: cron jobs, Terraform, CI/CD, observability agents, backup scripts.</OvhWarning>
 
 <!--
 Trainer notes S07 Application credentials:
@@ -634,11 +628,11 @@ slideId: "S08 -- Secret Manager"
 los: ["LO-SEC-K05"]
 ---
 
-# Secret Manager &mdash; where credentials and secrets actually live
+# Secret Manager &mdash; where creds and secrets live
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.6}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 28}}}%%
 flowchart LR
     DEV[Developer<br/>writes secret]:::src
@@ -677,9 +671,7 @@ Store once. Configure the consumer to <strong>fetch at boot</strong> or on deman
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4 text-sm">
-  <strong>Principle</strong>&nbsp;: if your config file contains a password, your config file is a secret. <strong>Externalize.</strong> AWS analogy = AWS Secrets Manager. Same pattern.
-</div>
+<OvhWarning title="Externalize all secrets" class="mt-4">If your config file contains a password, your config file is a secret. AWS analogy = AWS Secrets Manager. Same pattern.</OvhWarning>
 
 <!--
 Trainer notes S08 Secret Manager:
@@ -764,7 +756,7 @@ los: ["LO-SEC-S05", "LO-SEC-A01"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.6}
+```mermaid {scale: 0.7}
 %%{init: {'flowchart': {'nodeSpacing': 22, 'rankSpacing': 80}}}%%
 flowchart BR
     AUDIT((Audit<br/>monthly)):::audit
@@ -874,9 +866,7 @@ los: ["LO-SEC-A01"]
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
-  <strong style="color: var(--ovh-masterbrand-blue);">Principle</strong>&nbsp;: map to <strong>how the company actually works</strong>, not to OVHcloud-specific abstractions. Write the mapping once, link it from the team onboarding doc. This is the deliverable you defend to the auditor.
-</div>
+<OvhNotice title="Principle" class="mt-4">Map to <strong>how the company actually works</strong>, not to OVHcloud-specific abstractions. Write the mapping once, link it from the team onboarding doc. This is the deliverable you defend to the auditor.</OvhNotice>
 
 <!--
 Trainer notes S11 Corporate IAM segmentation:
@@ -903,7 +893,7 @@ slideId: "Demo -- Overview"
 los: ["LO-SEC-S01", "LO-SEC-S02", "LO-SEC-S03", "LO-SEC-S04", "LO-SEC-S05"]
 ---
 
-# Demo &mdash; the four moves, on the running Northwind project
+# Demo &mdash; the four moves, on the Northwind project
 
 <div class="grid grid-cols-2 gap-6 mt-6">
 
@@ -929,7 +919,7 @@ At the end of the demo, you've seen the four moves in action on a real project. 
 
 </div>
 
-<div class="mt-6 text-center" style="color: var(--ovh-masterbrand-blue); font-weight: 600;">
+<div class="mt-4 text-center" style="color: var(--ovh-masterbrand-blue); font-weight: 600;">
   Starting from : Northwind demo project &middot; Trainer = admin on the org &middot; Mod 2.4 state still in place
 </div>
 
@@ -989,9 +979,7 @@ los: ["LO-SEC-S01", "LO-SEC-S02", "LO-SEC-S03", "LO-SEC-S04", "LO-SEC-S05"]
 
 # Lab &mdash; Production-shape Northwind identity
 
-<div class="ovh-callout mt-4">
-You are Northwind's Cloud Ops engineer. The CTO walks back in : <em>"The PostgreSQL password is in a config file. The backup script uses your personal openrc. Everyone in the project is admin. The auditor arrives in three weeks. Fix it."</em> Today you : (1) create a developer IAM identity scoped via a group, (2) generate a backup application credential decoupled from your personal credentials, (3) externalize the PostgreSQL password and the S3 backup secret to Secret Manager, (4) run a five-catalog audit and resolve at least one finding.
-</div>
+<OvhNotice title="Mission" class="mt-4">You are Northwind's Cloud Ops engineer. The CTO walks back in: <em>&ldquo;The PostgreSQL password is in a config file. The backup script uses your personal openrc. Everyone in the project is admin. The auditor arrives in three weeks. Fix it.&rdquo;</em> Today you: (1) create a developer IAM identity scoped via a group; (2) generate a backup application credential decoupled from your personal credentials; (3) externalize the PostgreSQL password and the S3 backup secret to Secret Manager; (4) run a five-catalog audit and resolve at least one finding.</OvhNotice>
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 
@@ -1414,7 +1402,7 @@ los: ["LO-SEC-K01", "LO-SEC-K02", "LO-SEC-K03", "LO-SEC-K04", "LO-SEC-K05", "LO-
 
 ## You can now...
 
-<div class="ovh-callout mt-4">
+<div class="ovh-callout mt-1">
 <div class="mt-1 text-xs">
 &middot; <strong style="color: var(--ovh-masterbrand-blue);">Distinguish</strong> OVHcloud IAM (account-wide) from OpenStack Keystone (project-scoped)<br/>
 &middot; <strong style="color: var(--ovh-masterbrand-blue);">Explain</strong> the four-ingredient IAM policy structure and deny-overrides-allow<br/>
@@ -1435,7 +1423,7 @@ los: ["LO-SEC-K01", "LO-SEC-K02", "LO-SEC-K03", "LO-SEC-K04", "LO-SEC-K05", "LO-
 
 ## Next stop &mdash; Module 3.1
 
-<div class="ovh-callout mt-4" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
+<div class="ovh-callout mt-1" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
 <strong style="color: var(--ovh-masterbrand-blue);">Infrastructure as Code Essentials &mdash; CLI & Terraform</strong>
 <div class="mt-3 text-xs">
 Northwind's network is production-shape. Its identity is production-shape. <strong>But everything has been built by hand.</strong><br/><br/>

@@ -67,34 +67,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 -- Sentier battu** &middot; 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 -- Theory** &middot; 30 min
-*Three control planes &middot; IaC definition & benefits &middot; OpenStack CLI &middot; Terraform overview &middot; Provider selection &middot; Workflow & state*
-
-**Block 3 -- Demo** &middot; 15 min
-*OpenStack CLI audit &middot; Terraform init/plan/apply/destroy &middot; Reproducibility proof*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 -- Lab** &middot; 30 min
-*Deploy Northwind staging with Terraform &middot; verify with CLI &middot; destroy + apply again*
-
-**Block 5 -- Micro-check** &middot; 5 min
-*Formative QCM, 7 questions*
-
-**Block 6 -- Wrap-up** &middot; 5 min
-*Recap & transition to Module 3.2 (Operations)*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">Three control planes · IaC benefits · OpenStack CLI · Terraform · Provider selection · Workflow &amp; state</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">OpenStack CLI audit · Terraform init/plan/apply/destroy · Reproducibility proof</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Deploy Northwind staging with Terraform · verify with CLI · destroy + apply again</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">7 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 3.2</span>
+</div>
 </div>
 
 <!--
@@ -257,9 +259,7 @@ los: ["LO-IAC-A01"]
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
-<strong style="color: var(--ovh-masterbrand-blue);">Module 3.1 answer</strong>&nbsp;: <strong>OpenStack CLI</strong> to audit and verify. <strong>Terraform</strong> to declare, reproduce, and evolve. By the end of today, deleting Northwind and rebuilding takes <strong>10 minutes</strong>.
-</div>
+<OvhNotice title="Module 3.1 answer" class="mt-4 text-sm"><strong>OpenStack CLI</strong> to audit and verify. <strong>Terraform</strong> to declare, reproduce, and evolve. By the end of today, deleting Northwind and rebuilding takes <strong>10 minutes</strong>.</OvhNotice>
 
 <!--
 Trainer notes S01 Where we left off:
@@ -281,7 +281,7 @@ los: ["LO-IAC-K02"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.6}
+```mermaid {scale: 0.55}
 %%{init: {'flowchart': {'nodeSpacing': 35, 'rankSpacing': 45}}}%%
 flowchart LR
     OPS[Operator]:::user
@@ -341,7 +341,7 @@ slideId: "S03 -- What is IaC"
 los: ["LO-IAC-K01"]
 ---
 
-# Infrastructure as Code &mdash; definition and four benefits
+# Infra as Code &mdash; definition and four benefits
 
 <div class="grid grid-cols-2 gap-6 mt-4 text-sm">
 
@@ -403,7 +403,7 @@ los: ["LO-IAC-K02", "LO-IAC-S01"]
 
 <div class="flex justify-center mt-2">
 
-```mermaid {scale: 0.58}
+```mermaid {scale: 0.65}
 %%{init: {'flowchart': {'nodeSpacing': 28, 'rankSpacing': 38}}}%%
 flowchart LR
     RC[openrc.sh\nOS_AUTH_URL\nOS_PROJECT_ID\nOS_USERNAME\nOS_PASSWORD]:::rc
@@ -466,7 +466,7 @@ slideId: "S05 -- Essential CLI commands"
 los: ["LO-IAC-S02"]
 ---
 
-# Essential OpenStack CLI commands &mdash; the six daily tools
+# Essential OpenStack CLI commands &mdash; 6 daily tools
 
 <div class="text-xs mt-3">
 
@@ -514,9 +514,7 @@ los: ["LO-IAC-S02"]
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
-<strong style="color: var(--ovh-masterbrand-blue);">Pattern for scripting</strong>&nbsp;: <code>openstack server list -f json | jq '.[].ID'</code> &mdash; output as JSON, pipe to jq for ID extraction. Used in CI/CD health checks and IaC pre-flight validations.
-</div>
+<OvhNotice title="Pattern for scripting" class="mt-4 text-sm"><code>openstack server list -f json | jq '.[].ID'</code> &mdash; output as JSON, pipe to jq for ID extraction. Used in CI/CD health checks and IaC pre-flight validations.</OvhNotice>
 
 <!--
 Trainer notes S05 Essential CLI commands:
@@ -628,9 +626,7 @@ los: ["LO-IAC-K04"]
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm" style="border-left-color: var(--ovh-masterbrand-blue); border-left-width: 4px;">
-<strong style="color: var(--ovh-masterbrand-blue);">Rule of thumb</strong>&nbsp;: if the resource exists in Horizon (OpenStack UI), use the OpenStack provider. If it only appears in the OVHcloud Manager, use the OVHcloud provider. Real-world configs use <strong>both providers</strong> in the same root module.
-</div>
+<OvhNotice title="Rule of thumb" class="mt-4 text-sm">if the resource exists in Horizon (OpenStack UI), use the OpenStack provider. If it only appears in the OVHcloud Manager, use the OVHcloud provider. Real-world configs use <strong>both providers</strong> in the same root module.</OvhNotice>
 
 <!--
 Trainer notes S07 OVHcloud provider vs OpenStack provider:
@@ -824,9 +820,7 @@ los: ["LO-IAC-S07", "LO-IAC-A02"]
 
 </div>
 
-<div class="ovh-callout mt-4 text-sm">
-<strong>The manual-change trap (LO-IAC-A02)</strong>&nbsp;: a colleague deletes an instance manually in the Manager UI. The state file still says it exists. On the next <code>terraform plan</code>, Terraform sees a discrepancy and will try to <strong>recreate the instance</strong>. <strong>Manual changes in Terraform-managed infra are a source of drift and unintended re-creations.</strong>
-</div>
+<OvhNotice title="The manual-change trap (LO-IAC-A02)" class="mt-4 text-sm">a colleague deletes an instance manually in the Manager UI. The state file still says it exists. On the next <code>terraform plan</code>, Terraform sees a discrepancy and will try to <strong>recreate the instance</strong>. <strong>Manual changes in Terraform-managed infra are a source of drift and unintended re-creations.</strong></OvhNotice>
 
 <!--
 Trainer notes S10 State management:
@@ -935,9 +929,7 @@ los: ["LO-IAC-S01", "LO-IAC-S02", "LO-IAC-S03", "LO-IAC-S04", "LO-IAC-S05", "LO-
 
 # Lab &mdash; Deploy Northwind staging via Terraform
 
-<div class="ovh-callout mt-4">
-The CTO walks in : <em>"We just lost the staging environment to a misconfigured script. We need it back. Oh, and this time, put it in a file so it never happens again."</em> Today you : (1) configure the OpenStack CLI and run an audit of your current project, (2) write a minimal Terraform config that deploys a Northwind-shaped staging instance + volume + Security Group, (3) run <code>terraform plan</code>, review and apply, (4) destroy the stack and apply again to prove reproducibility, (5) commit the <code>.tf</code> files to your lab repository.
-</div>
+<OvhNotice title="Mission" class="mt-4">The CTO walks in : <em>"We just lost the staging environment to a misconfigured script. We need it back. Oh, and this time, put it in a file so it never happens again."</em> Today you : (1) configure the OpenStack CLI and run an audit of your current project, (2) write a minimal Terraform config that deploys a Northwind-shaped staging instance + volume + Security Group, (3) run <code>terraform plan</code>, review and apply, (4) destroy the stack and apply again to prove reproducibility, (5) commit the <code>.tf</code> files to your lab repository.</OvhNotice>
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 

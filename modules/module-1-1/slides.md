@@ -59,34 +59,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 — Sentier battu** · 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 — Theory** · 30 min
-*Cloud properly defined, OVHcloud positioning, Core scope*
-
-**Block 3 — Demo** · 15 min
-*Walk-through of the OVHcloud Manager UI*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 — Lab** · 30 min
-*Positioning Drill (pairs)*
-
-**Block 5 — Micro-check** · 5 min
-*Formative QCM, 6 questions*
-
-**Block 6 — Wrap-up** · 5 min
-*Recap & transition to Module 1.2*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">Cloud definition · OVHcloud positioning · Core scope</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">OVHcloud Manager UI walk-through</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Positioning Drill (pairs)</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">6 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 1.2</span>
+</div>
 </div>
 
 <!--
@@ -254,9 +256,7 @@ slideId: "S02 — Cloud properly defined"
 
 </div>
 
-<div class="ovh-callout mt-10">
-  <strong>Reality filter:</strong> if any one of these five is missing, it's not cloud — it's hosting.
-</div>
+<OvhNotice title="Reality filter" class="mt-10">if any one of these five is missing, it's not cloud — it's hosting.</OvhNotice>
 
 <div class="absolute bottom-12 right-12 text-xs" style="color: var(--ovh-gray-500);">
   Source: NIST SP 800-145 (2011)
@@ -281,7 +281,7 @@ slideId: "S03 — IaaS / PaaS / SaaS"
 
 <div class="flex justify-center">
 
-```mermaid {scale: 0.55}
+```mermaid {scale: 0.51}
 %%{init: {'flowchart': {'nodeSpacing': 12, 'rankSpacing': 15, 'subGraphTitleMargin': {'top': 10, 'bottom': 15}}}}%%
 flowchart TB
     subgraph On_Prem["On-premise"]
@@ -331,9 +331,7 @@ flowchart TB
 
 </div>
 
-<div class="ovh-callout mt-4">
-  <strong>OVHcloud - Public Cloud - Core Program = IaaS.</strong> Adjacent managed services (MKS, DBaaS) sit higher in the stack and are out of scope for this certification.
-</div>
+<OvhNotice title="Core Associate scope" class="mt-4">Core Program = IaaS. Adjacent managed services (MKS, DBaaS) sit higher in the stack and are out of scope for this certification.</OvhNotice>
 
 <!--
 Trainer notes — S03 IaaS/PaaS/SaaS:
@@ -384,9 +382,7 @@ slideId: "S04 — Shared responsibility"
 
 </div>
 
-<div class="ovh-callout mt-4">
-  <strong>"Shared" ≠ "split 50/50".</strong> The line sits between the hypervisor and the guest OS.
-</div>
+<OvhWarning title="Common confusion" class="mt-6">"Shared" does not mean "split 50/50". The line sits between the hypervisor and the guest OS.</OvhWarning>
 
 <!--
 Trainer notes — S04 Shared responsibility:
@@ -434,9 +430,7 @@ Workloads spread across multiple cloud providers — by design or by drift.
   Northwind's likely positioning: <strong>Public Cloud</strong> + <strong>Hybrid</strong> bridge to residual bare-metal.
 </div>
 
-<div class="ovh-callout mt-4">
-  These four terms are often confused in conversation. Clarify the vocabulary <em>before</em> debating the architecture.
-</div>
+<OvhNotice title="Vocabulary first" class="mt-4">These four terms are often confused in conversation. Clarify the vocabulary <em>before</em> debating the architecture.</OvhNotice>
 
 <!--
 Trainer notes — S05 Public/Private/Hybrid/Multi:
@@ -569,9 +563,7 @@ Managed Kubernetes Service (MKS) · Managed Databases · AI Endpoints · Data An
 </div>
 </div>
 
-<div class="ovh-callout mt-4">
-For 3 days we stay strictly in the <strong>inner</strong> layer. The outer layer is not "less than" — it's the subject of other certifications.
-</div>
+<OvhNotice title="In scope for this program" class="mt-4">For 3 days we stay strictly in the inner layer. The outer layer is not "less than" — it's the subject of other certifications.</OvhNotice>
 
 <!--
 Trainer notes S08 Core scope:
@@ -682,9 +674,7 @@ flowchart LR
 
 </div>
 
-<div class="ovh-callout mt-2">
-A conversation tool, not a commercial gate. Used as framing for the <strong>Positioning Drill</strong> that follows.
-</div>
+<OvhNotice title="Lab preparation" class="mt-2">A conversation tool, not a commercial gate. Used as framing for the Positioning Drill that follows.</OvhNotice>
 
 <!--
 Trainer notes S10 Qualification grid:
@@ -831,9 +821,7 @@ los: ["LO-FND-A01", "LO-FND-A02"]
 
 # Lab — Positioning Drill
 
-<div class="ovh-callout mt-4">
-In pairs, you draw one <strong>stakeholder objection card</strong>. Prepare a structured 3-point rebuttal grounded in this module's content. Then defend it against another pair playing the stakeholder.
-</div>
+<OvhNotice title="Lab — Positioning Drill" class="mt-4">In pairs, you draw one stakeholder objection card. Prepare a structured 3-point rebuttal grounded in this module's content. Then defend it against another pair playing the stakeholder.</OvhNotice>
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 

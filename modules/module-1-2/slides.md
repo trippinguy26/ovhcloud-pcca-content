@@ -63,34 +63,36 @@ slideId: "Agenda"
 
 # Agenda
 
-<div class="grid grid-cols-2 gap-8 mt-8">
-
-<div>
-
-**Block 1 — Sentier battu** · 5 min
-*Prerequisites & remediation pointers*
-
-**Block 2 — Theory** · 30 min
-*Project, regions, billing, OpenStack identity*
-
-**Block 3 — Demo** · 15 min
-*End-to-end bootstrap : Manager + CLI*
-
+<div class="grid grid-cols-3 gap-4 mt-4 text-sm">
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 1 — 5 min</strong><br/>
+Sentier battu / Hors piste
 </div>
-
-<div>
-
-**Block 4 — Lab** · 30 min
-*Bootstrap Northwind's working environment*
-
-**Block 5 — Micro-check** · 5 min
-*Formative QCM, 7 questions*
-
-**Block 6 — Wrap-up** · 5 min
-*Recap & transition to Module 1.3*
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 2 — 30 min</strong><br/>
+Theory &amp; Concepts<br/>
+<span class="text-xs text-gray-500">Project · regions · billing · OpenStack identity</span>
 </div>
-
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 3 — 15 min</strong><br/>
+Trainer Demonstration<br/>
+<span class="text-xs text-gray-500">End-to-end bootstrap — Manager + CLI</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 4 — 30 min</strong><br/>
+Learner Lab<br/>
+<span class="text-xs text-gray-500">Bootstrap Northwind's working environment</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 5 — 5 min</strong><br/>
+Micro-check QCM<br/>
+<span class="text-xs text-gray-500">7 questions</span>
+</div>
+<div class="border border-gray-200 rounded-lg p-3">
+<strong style="color: var(--ods-color-primary-700)">Block 6 — 5 min</strong><br/>
+Wrap-up &amp; Transition<br/>
+<span class="text-xs text-gray-500">Recap · transition to Module 1.3</span>
+</div>
 </div>
 
 <!--
@@ -197,9 +199,7 @@ los: ["LO-PCI-K01"]
 
 </div>
 
-<div class="ovh-callout mt-10">
-  <strong>The project is the fundamental unit of OVHcloud Public Cloud.</strong> Everything you deploy lives inside one.
-</div>
+<OvhNotice title="Key concept" class="mt-10">The project is the fundamental unit of OVHcloud Public Cloud. Everything you deploy lives inside one.</OvhNotice>
 
 <div class="mt-4 text-center text-sm" style="color: var(--ovh-gray-700);">
   Legacy analogy : a vCenter datacenter folder with its own permissions and chargeback.<br/>
@@ -304,9 +304,7 @@ Same project ID after upgrade : Discovery → Standard is in-place
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-<strong>Trap :</strong> never plan a real workload on a Discovery project. Quota caps will hit you mid-deployment.
-</div>
+<OvhWarning title="Trap" class="mt-4">Never plan a real workload on a Discovery project. Quota caps will hit you mid-deployment.</OvhWarning>
 
 <!--
 Trainer notes S03 Discovery mode:
@@ -355,13 +353,9 @@ SGP · SYD<br/>
 
 <div class="mt-6 space-y-2 text-sm">
 
-<div class="ovh-callout">
-A region drives <strong>3 decisions</strong> : latency to your users · regulatory residency · which services are available
-</div>
+<OvhNotice class="mt-10">A region drives <strong>3 decisions</strong> : latency to your users · regulatory residency · which services are available</OvhNotice>
 
-<div class="ovh-callout ovh-callout-warn">
-Service availability is <strong>not uniform</strong> across regions. Core services exist almost everywhere, some adjacent services are region-restricted. Verify in the Manager at deployment time.
-</div>
+<OvhWarning class="mt-4">Service availability is <strong>not uniform</strong> across regions. Core services exist almost everywhere, some adjacent services are region-restricted. Verify in the Manager at deployment time.</OvhWarning>
 
 </div>
 
@@ -464,7 +458,7 @@ los: ["LO-PCI-K05"]
 
 # Two identities, one project
 
-<div class="flex justify-center mt-4">
+<div class="flex justify-center mt-2">
 
 ```mermaid {scale: 0.65}
 %%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 35}}}%%
@@ -483,7 +477,7 @@ flowchart TB
 
 </div>
 
-<div class="grid grid-cols-2 gap-4 mt-6 text-sm">
+<div class="grid grid-cols-2 gap-4 mt-2 text-sm">
 
 <div class="ovh-callout">
 <strong>Manager identity (NIC handle)</strong><br/>
@@ -497,9 +491,7 @@ Scoped inside a specific project. Deploys and operates resources via API / CLI. 
 
 </div>
 
-<div class="ovh-callout ovh-callout-warn mt-4">
-  <strong>Deliberate split.</strong> You can delegate full operational power to engineers without exposing the billing-owning account.
-</div>
+<OvhWarning title="Deliberate split" class="mt-4">You can delegate full operational power to engineers without exposing the billing-owning account.</OvhWarning>
 
 <!--
 Trainer notes S06 Two identities:
@@ -552,9 +544,7 @@ los: ["LO-PCI-K05"]
 
 </div>
 
-<div class="ovh-callout mt-10">
-  <strong>Service catalog :</strong> the list of endpoints the user can reach once authenticated. Different per region.
-</div>
+<OvhNotice title="Service catalog" class="mt-10">The list of endpoints the user can reach once authenticated. Different per region.</OvhNotice>
 
 <div class="mt-4 text-center text-sm" style="color: var(--ovh-gray-700);">
   Analogy : User = employee · Project = office · Role = access badge · Token = day pass.
@@ -617,9 +607,7 @@ Recommended for any non-interactive workflow.
 
 </div>
 
-<div class="ovh-callout mt-6">
-  <strong>Rule of thumb :</strong> a human uses a password, a script uses an application credential.
-</div>
+<OvhNotice title="Rule of thumb" class="mt-6">A human uses a password, a script uses an application credential.</OvhNotice>
 
 <div class="mt-4 text-center text-xs" style="color: var(--ovh-gray-700);">
   All three authenticate against Keystone in the end. Only the credential type differs.
@@ -858,9 +846,7 @@ los: ["LO-PCI-S01", "LO-PCI-S02", "LO-PCI-S03", "LO-PCI-S04", "LO-PCI-S05"]
 
 # Lab — Bootstrap Northwind's working environment
 
-<div class="ovh-callout mt-4">
-You are Northwind's new Cloud Ops engineer. The CTO has handed you the OVHcloud credentials and a voucher. Your mission : bootstrap a fully working Public Cloud environment named <code>&lt;your-initials&gt;-northwind-staging</code>, create one OpenStack user, set up local CLI access, and prove the environment is operational.
-</div>
+<OvhNotice title="Mission" class="mt-4">You are Northwind's new Cloud Ops engineer. The CTO has handed you the OVHcloud credentials and a voucher. Your mission: bootstrap a fully working Public Cloud environment named <code>&lt;your-initials&gt;-northwind-staging</code>, create one OpenStack user, set up local CLI access, and prove the environment is operational.</OvhNotice>
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 
@@ -946,10 +932,7 @@ slideId: "Lab — Steps"
 
 </div>
 
-<div class="ovh-callout mt-6 text-sm">
-<strong>Artifacts to keep locally</strong> (do NOT commit to git) :<br/>
-<code>openrc.sh</code> · <code>app-cred.json</code> · <code>verification.txt</code> (captured CLI output)
-</div>
+<OvhNotice title="Artifacts to keep locally" class="mt-6">Do NOT commit to git: <code>openrc.sh</code> · <code>app-cred.json</code> · <code>verification.txt</code> (captured CLI output)</OvhNotice>
 
 <div class="mt-4 text-center text-xs" style="color: var(--ovh-gray-700);">
   Stuck? Raise your hand or ping the trainer. Common issues : voucher, CLI install, password typo on source.
